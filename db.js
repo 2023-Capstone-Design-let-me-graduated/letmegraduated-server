@@ -31,6 +31,9 @@ async function run() {
     await client2.close();
   }
 }
+
+// crud 만들어야함 위에는 예시일 뿐이다.
+
 run().catch(console.dir);
 
 module.exports={run};

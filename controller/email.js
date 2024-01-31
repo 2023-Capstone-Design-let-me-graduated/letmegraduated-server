@@ -52,6 +52,7 @@ function emailForSignUp(receiverEmail) {
   main(receiverEmail);
   return secretCode;
 }
+
 /**
  *
  * @param {string} userId
