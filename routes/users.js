@@ -4,8 +4,8 @@ const {emailForWithdrawal} = require('../controller/email');
 // const {withdrawal}=require('../controller/db');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/:id', function(req, res, next) {
+  res.send(req.params.id); // 이걸로 다 바꿔야 함.
 });
 
 router.get('/logout',function(req,res,next){
