@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
+// users 라우터
+const express = require('express');
+const router = express.Router();
+const { renderUsers, renderuserid } = require('../controller/users');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
+router.get('/users', renderUsers);
+router.get('/main/:userid', renderuserid);
 module.exports = router;
