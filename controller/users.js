@@ -5,6 +5,6 @@ exports.renderUsers = (req, res, next) => {
     res.send('respond with a resource for users');
 }
 
-exports.renderuserid = (req, res, next) = { 
-    
+exports.renderuserid = (req, res, next) => {
+
 }

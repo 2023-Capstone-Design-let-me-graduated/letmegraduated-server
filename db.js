@@ -5,7 +5,11 @@ dotenv.config();
 const { MongoClient } = require("mongodb");
 
 // // Replace the uri string with your connection string.
+<<<<<<< HEAD
 const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`
+=======
+const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/?retryWrites=true&w=majority`;
+>>>>>>> 4c7c1307b51248688917a1384d337e59dacdb6f1
 
 const client1 = new MongoClient(uri); // 클라이언트는 내가 조종할 수 있는 db 개수 늘림.
 const client2 = new MongoClient(uri);
@@ -33,6 +37,9 @@ async function run() {
 }
 run().catch(console.dir);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 4c7c1307b51248688917a1384d337e59dacdb6f1
 module.exports={run};
