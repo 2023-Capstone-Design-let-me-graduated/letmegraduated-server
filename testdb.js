@@ -21,7 +21,8 @@ let testUser = {
   eng : false,
 };
 
-const createUser = async() => {
+// 유저를 생성하는 코드
+const createUser = async(username, password, major, semester, m_list, s_list, eng) => {
   /**
    * 사용자가 필요한 데이터들
    * username : 유저이름 [string]
@@ -41,15 +42,49 @@ const createUser = async() => {
     // 사용자 데이터 베이스 및 컬렉션 가져오기
     const userdb = userDataClient.db("userData").collection("users");
     // 사용자 데이터 삽입
-    const result = await userdb.insertOne(testUser);
-    console.log(result);
+    const newUser = {
+      username,
+      password,
+      major,
+      semester : [],
+      score : 0,
+      m_score : 0,
+      m_list : [],
+      s_score : 0,
+      s_list : [],
+      eng : false,
+    };
 
+    const result = await userdb.insertOne(newUser);
+    console.log(`유저 ${username} 생성 ID: ${result.insertedId}`);
+    return result.insertedId;
   } catch (err) {
     console.error(err);
   } finally {
     await userDataClient.close();
   }
 }
-createUser();
+// createUser();
 
-module.exports={createUser, };
+// 콘솔로 전체 유저를 확인하는 코드
+const printAllUsers = async() => {
+  try {
+    await userDataClient.connect();
+    const userdb = userDataClient.db("userData").collection("users");
+    const cursor = userdb.find();
+    
+    for await(const doc of cursor) {
+      console.log(doc);
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    await userDataClient.close();
+  }
+}
+printAllUsers();
+
+// 콘솔로 일부분 유저를 확인하는 코드
+
+
+module.exports={createUser, printAllUsers, };

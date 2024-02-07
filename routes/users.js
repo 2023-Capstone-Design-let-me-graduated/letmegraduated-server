@@ -2,9 +2,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { renderUsers, renderuserid } = require('../controller/users');
+const { renderUsers, rendCreatUser, renderuserid } = require('../controller/users');
 
 /* GET users listing. */
 router.get('/users', renderUsers);
+router.post('/register', rendCreatUser);
+
 router.get('/main/:userid', renderuserid);
+
 module.exports = router;
