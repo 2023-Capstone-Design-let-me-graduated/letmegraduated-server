@@ -74,7 +74,6 @@ exports.emailForWithdrawal=(req,res,next)=>{
     OAUTH_CLIENT_SECRET,
     OAUTH_REFRESH_TOKEN,
   } = process.env;
-
   // db에서 userId를 가진 user 찾아서 email을 뽑아내는 거 만들어야 함.
     // const receiverEmail= db. 머시기
   //

@@ -30,6 +30,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(indexRouter);
+app.use(usersRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
@@ -40,9 +48,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.send("오류 발생");
 });
-
-app.listen(app.get('port'), () => {
-    console.log(app.get('port'), '번 포에 서버 연결');
-  });
 
 module.exports = app;

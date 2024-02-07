@@ -1,6 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 const {emailForWithdrawal} = require('../controller/email');
+const { renderUsers, rendCreatUser, renderuserid } = require('../controller/users');
 // const {withdrawal}=require('../controller/db');
 
 /* GET users listing. */
@@ -13,5 +14,14 @@ router.get('/logout',function(req,res,next){
 })
 
 // router.get('/withdrawal',emailForWithdrawal,withdrawal);
+
+// users 라우터
+
+
+/* GET users listing. */
+router.get('/users', renderUsers);
+router.post('/register', rendCreatUser);
+
+router.get('/main/:userid', renderuserid);
 
 module.exports = router;
