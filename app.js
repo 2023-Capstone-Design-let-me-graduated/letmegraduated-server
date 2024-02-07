@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 const app = express();
 
 // 호스트
@@ -13,6 +14,7 @@ app.set('port', process.env.PORT || 3000);
 
 app.use(indexRouter);
 app.use(authRouter);
+app.use(userRouter);
 // app.use('/signup',signupRouter);
 app.use(logger('dev'));
 app.use(express.json());

@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const { rendCreatUser } = require('../controller/user');
+
+router.post('/signup', rendCreatUser);
 
 // userid에서 졸업시험요건 꺼내기
 router.get('/exam/:userid', function(req, res, next) {
