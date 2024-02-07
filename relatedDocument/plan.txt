@@ -1,0 +1,11 @@
+남는 시간에 하는건
+codefug : auth쪽
+seonkkk : user쪽
+둘다 끝나면 index
+7. seonkkk(c r), codefug(u d)
+8. seonkkk user, codefug auth 끝내기
+9. 위에서부터 2개씩 완료
+10. 
+11. 끝내고
+12. 배포 aws 이런거
+13. 테스트

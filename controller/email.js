@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 /**
  *
- * @param {string} receiverEmail
+ * @param req,res,next
  * @returns {string} secretCode
  * 사용자의 이메일을 받으면 Oauth 인증을 통해서 robot9917@gmail.com에서 해당 이메일로 인증을 보내게 됩니다.
  * 보낸 인증에서는 uuidv4를 활용하여 랜덤으로 16자리 수가 들어가게 되고 이는 return으로 받게 되어 클라이언트에서 비교할 수 있습니다.
