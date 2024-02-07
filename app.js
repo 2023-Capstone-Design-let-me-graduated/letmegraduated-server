@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const port = 3000;
 const indexRouter = require('./routes/index');
-const loginRouter = require('./routes/login');
+const loginRouter = require('./routes/auth');
 const signupRouter = require("./routes/signup");
 const usersRouter = require('./routes/users');
 
@@ -14,7 +14,6 @@ app.use('/',indexRouter);
 app.use('/login',loginRouter);
 // app.use('/signup',signupRouter);
 app.use('/users', usersRouter);
-app.use('/signup',signupRouter);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

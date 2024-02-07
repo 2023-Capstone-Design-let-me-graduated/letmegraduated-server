@@ -59,7 +59,7 @@ exports.emailForSignUp=(req,res,next)=>{
 
 /**
  *
- * @param {string} userId
+ * @param {string} req,res,next
  * @returns {void}
  * 회원 데이터에 있는 이메일을 꺼내서 탈퇴가 완료되었음을 나타내는 이메일을 보냅니다.
  * 탈퇴 전에 호출해야 합니다.
