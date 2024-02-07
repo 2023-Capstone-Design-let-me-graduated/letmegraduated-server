@@ -4,6 +4,8 @@ const router = express.Router();
 const { renderIndex } = require('../controller/index');
 
 /* GET home page. */
-router.get('/', renderIndex);
+router.get('/', function(req, res, next) {
+  res.send('안녕');
+});
 
 module.exports = router;

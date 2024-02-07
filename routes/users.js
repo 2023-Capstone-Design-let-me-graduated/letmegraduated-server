@@ -1,9 +1,17 @@
-// users 라우터
-const express = require('express');
-const router = express.Router();
-const { renderUsers } = require('../controller/users');
+var express = require('express');
+var router = express.Router();
+const {emailForWithdrawal} = require('../controller/email');
+// const {withdrawal}=require('../controller/db');
 
 /* GET users listing. */
-router.get('/users', renderUsers);
+router.get('/:id', function(req, res, next) {
+  res.send(req.params.id); // 이걸로 다 바꿔야 함.
+});
 
-// module.exports = router;
+router.get('/logout',function(req,res,next){
+  res.send('로그 아웃');
+})
+
+// router.get('/withdrawal',emailForWithdrawal,withdrawal);
+
+module.exports = router;
