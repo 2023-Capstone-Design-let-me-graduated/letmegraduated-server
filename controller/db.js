@@ -1,10 +1,10 @@
-// 몽고디비랑 연결해서 user데이터 뽑아봤음.
 const dotenv = require("dotenv");
 dotenv.config();
 const { MongoClient } = require("mongodb");
 // // Replace the uri string with your connection string.
 
-const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
 
 // createDB, readDB, updateDB, deleteDB 함수
 
@@ -88,7 +88,7 @@ const printAllUsers = async() => {
     const cursor = userdb.find();
     
     for await(const doc of cursor) {
-      // console.log(doc);
+      console.log(doc);
     }
   } catch (err) {
     throw new Error(err);
@@ -96,6 +96,7 @@ const printAllUsers = async() => {
     await userDataClient.close();
   }
 }
+printAllUsers();
 // 콘솔로 일부분 유저를 확인하는 코드
 
 module.exports={createUser, printAllUsers};
