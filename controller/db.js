@@ -1,11 +1,8 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
-// // Replace the uri string with your connection string.
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
-
-// createDB, readDB, updateDB, deleteDB 함수
 
 // const client1 = new MongoClient(uri); // 클라이언트는 내가 조종할 수 있는 db 개수 늘림.
 // const client2 = new MongoClient(uri);
@@ -33,8 +30,17 @@ const { MongoClient } = require("mongodb");
 // }
 // run().catch(console.dir);
 
-// 회원 가입 시 유저 컬렉션에 도큐먼트 생성하는 코드
+
+
+
+
+/**
+ * createDB(); 함수
+ * @param {object} newUser 
+ * 회원 가입 시 유저 컬렉션에 도큐먼트 생성하는 코드
+ */
 const createDB = async (newUser) => {
+  const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
   const dbName = "userData";
   const collectionName = "users";
   const client = new MongoClient(uri);
@@ -47,7 +53,7 @@ const createDB = async (newUser) => {
     const newUserData = newUser;
     const result = await create.insertOne(newUserData);
 
-    // console.log(`user creat: ${result.username} ID: ${result.insertedId}`);
+    //console.log(`user creat: ${result.username} ID: ${result.insertedId}`);
     return result.insertedId;
   } catch (err) {
     throw new Error(err);
@@ -56,16 +62,65 @@ const createDB = async (newUser) => {
   }
 }
 
-// 이거 콜백 형식(req,res,next) 말고 paramater형으로 바꿔줘 그래야 쓰기 편할듯
-// 유저 데이터, 타임테이블(전공, 교양), exam(영어시험)을 가져오는 DB
-const readDB = async (req, res, next) => {
-  const dbName = req.body.dbName; // 클라이언트에서 db이름을 가져온다.
+
+/**
+ * readDB(); 함수
+ * @param {string} dbName 
+ * @param {string} collectionName
+ * @return {object}
+ * 유저 데이터, 타임테이블(전공, 교양), exam(영어시험)을 전체 콜렉션을 가져오는 DB
+ */
+const readDB = async (dbName, collectionName) => {
+  const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
   const client = new MongoClient(uri);
 
   try {
     await client.connect();
+    const timeTableCollectionName = [
+      "2019_1", "2019_2", "2020_1", "2020_2", "2021_1",
+      "2021_2", "2022_1", "2022_2", "2023_1", "2023_2",
+    ];
 
-
+    let data;
+    if (dbName === "userData") {
+      if (collectionName === "users") {
+          const database = client.db(dbName);
+          const coll = database.collection(collectionName);
+          data = await coll.find().toArray();
+          console.log(data);
+          return data;
+      }
+      else {
+          throw new Error(err);
+      }
+    }
+    else if (dbName === "timeTable") {
+      if (timeTableCollectionName.includes(collectionName)) {
+          const database = client.db(dbName); 
+          const coll = database.collection(collectionName);
+          data = await coll.find().toArray();
+          console.log(data);
+          return data;
+      }
+      else {
+          throw new Error(err);
+      }
+    }
+    else if (dbName === "criteria") {
+      if (collectionName === "exam") {
+          const database = client.db(dbName); 
+          const coll = database.collection(collectionName);
+          data = await coll.find().toArray();
+          console.log(data);
+          return data;
+      }
+      else {
+          throw new Error(err);
+      }
+    }
+    else {
+      throw new Error(err);
+    }
   } catch (err) {
     throw new Error(err);
   } finally {
