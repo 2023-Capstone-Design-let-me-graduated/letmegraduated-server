@@ -1,5 +1,5 @@
 // controller
-const { createDB, } = require('./db');
+const { createDB } = require('./db');
 
 exports.rendCreatUser = async (req, res, next) => {
     /**
@@ -18,9 +18,9 @@ exports.rendCreatUser = async (req, res, next) => {
      */
     try {
         const newUser = {
-            username : req.body.username,
-            password : req.body.password,
-            major : req.body.major,
+            username : req.query.username,
+            password : req.query.password,
+            major : req.query.major,
             semester : [],
             score : 0,
             m_score : 0,
@@ -30,7 +30,7 @@ exports.rendCreatUser = async (req, res, next) => {
             eng : false,
             check : false,
           };
-          const creatDocument = await createDB(newUser);
+        await createDB(newUser);
     } catch (err) {
         throw new Error(err);
     } finally {

@@ -166,12 +166,12 @@
 //   readDB("timeTable", "2019_1");
 
 
-// /**
-//  * 이승현 테스트 코드
-//  */
-// const dotenv = require("dotenv");
-// dotenv.config();
+/**
+ * 이승현 테스트 코드
+ */
+const dotenv = require("dotenv");
+dotenv.config();
 
-// const {createDB,updateDB,deleteDB} = require('./controller/db');
+const {createDB,updateDB,deleteDB} = require('./controller/db');
 
-// deleteDB("userData","users",{username : "codepug"});
+deleteDB("userData","users",{username : "codefug"});
