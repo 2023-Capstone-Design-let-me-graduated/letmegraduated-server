@@ -172,6 +172,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const {createDB,updateDB,deleteDB} = require('./controller/db');
+const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
 
-deleteDB("userData","users",{username : "codefug"});
+const data = readDB("userData","users",{username : "testuser"})
+
+console.log(typeof data)

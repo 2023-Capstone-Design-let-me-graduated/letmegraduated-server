@@ -8,7 +8,7 @@ dotenv.config();
  * 보낸 인증에서는 uuidv4를 활용하여 랜덤으로 16자리 수가 들어가게 되고 이는 return으로 받게 되어 클라이언트에서 비교할 수 있습니다.
  */
 exports.emailForSignUp=(req,res,next)=>{
-  const receiverEmail = `${req.query.email}`;
+  const receiverEmail = `${req.params.email}`;
   const nodemailer = require("nodemailer");
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();
@@ -65,7 +65,7 @@ exports.emailForSignUp=(req,res,next)=>{
  * 탈퇴 전에 호출해야 합니다.
  */
 exports.emailForWithdrawal=(req,res,next)=>{
-  const userId = req.query.userId;
+  const userId = req.params.userId;
   const nodemailer = require("nodemailer");
   const db = require("./db");
   const {
@@ -75,11 +75,8 @@ exports.emailForWithdrawal=(req,res,next)=>{
     OAUTH_REFRESH_TOKEN,
   } = process.env;
 
-  // db에서 userId를 가진 user 찾아서 email을 뽑아내는 거 만들어야 함.
-    // const receiverEmail= db. 머시기
-  //
-  const receiverEmail = db.readDB("userData","users",0);
-  
+  const receiverEmail = db.readDB("userData","users",{username:userId},false).email;
+
   async function main(receiverEmail) {
     const transporter = nodemailer.createTransport({
       service: "gmail",
