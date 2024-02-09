@@ -1,5 +1,5 @@
-//require("dotenv").config();
-//const { MongoClient } = require("mongodb");
+require("dotenv").config();
+const { MongoClient } = require("mongodb");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
@@ -169,9 +169,38 @@
 /**
  * 이승현 테스트 코드
  */
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
-const {createDB,updateDB,deleteDB} = require('./controller/db');
+// const {createDB,updateDB,deleteDB} = require('./controller/db');
 
-deleteDB("userData","users",{username : "codefug"});
+// deleteDB("userData","users",{username : "codefug"});
+
+
+// const { createDB, readDB, updateDB, deleteDB } = require('./controller/db');
+// const userExam = async(req, res, next) => {
+//     /**
+//     * dbName은 userData
+//     * collectionName은 users
+//     * conditionName은 { username : "이름" } 형식으로 받음
+//     */
+//    let dbName = "userData";
+//    let collectionName = "users";
+//    let conditionName = {username : "테스트유저1"};
+   
+//    try {
+//        let user = await readDB(dbName, collectionName, conditionName, false);
+//        let engChange = { eng : true };
+//        if (!user) {
+//             console.log("없음");
+//        } else {
+//             await updateDB(dbName, collectionName, conditionName, engChange);
+//             console.log(user);
+//        }
+//    } catch(err) {
+//        throw new Error(err);
+//    }
+// }
+// userExam();
+
+// const { createDB, readDB, updateDB, deleteDB } = require('./controller/db');
