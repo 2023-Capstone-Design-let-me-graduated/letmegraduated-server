@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {indexController} = require('../controller/index');
+const {userPull, userExam} = require('../controller/index');
 
-// 메인화면에 필요한 모든 데이터 꺼내는 함수
-router.get('/main/:userid', function(req, res, next) {
-});
+// 유저 데이터를 가져옴
+router.get('/main/:userid', userPull);
 
-// userid 꺼내서 영어 졸업인증요건 바꾸는 함수
-router.put('/main/:userid',(req,res,next)=>{// 함수이름(req.params.userid)
-});
+// 유저의 영어 졸업 인증 요건을 수정
+router.put('/main/:userid', userExam);
 
 // major
 

@@ -1,5 +1,5 @@
-//require("dotenv").config();
-//const { MongoClient } = require("mongodb");
+require("dotenv").config();
+const { MongoClient } = require("mongodb");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
@@ -166,14 +166,6 @@
 //   readDB("timeTable", "2019_1");
 
 
-/**
- * 이승현 테스트 코드
- */
-const dotenv = require("dotenv");
-dotenv.config();
 
-const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
 
-const data = readDB("userData","users",{username : "testuser"})
 
-console.log(typeof data)

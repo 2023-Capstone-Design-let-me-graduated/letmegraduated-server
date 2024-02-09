@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
+const { examPull, userPullCheck, userDelete } = require('../controller/user');
 
-// userid에서 졸업시험요건 꺼내기
-router.get('/exam/:userid', function(req, res, next) {
-});
+// 유저의 영어시험의 종류를 가져옴
+router.get('/exam/:userid', examPull);
 
-// userid꺼내서 자격기준 점수 조건 맞는지 확인하고 true false
-router.put('/exam/:userid',(req,res,next)=>{// 함수이름(req.params.userid)
-});
+// userid꺼내서 졸업이 가능한지 자격기준을 확인
+router.put('/exam/:userid',userPullCheck);
 
+// userid를 삭제
+router.delete('/setting/:userid', userDelete);
 module.exports = router;

@@ -30,7 +30,7 @@ const createDB = async (newUser) => {
  * @return {object}
  * 유저 데이터, 타임테이블(전공, 교양), exam(영어시험)을 전체 콜렉션을 가져오는 DB
  * condition은 객체이다.
- * number가 1이 아니면 하나만 반환, 기본값은 전체 가져오기
+ * many가 false이 아니면 하나만 반환, 기본값은 전체 가져오기
  */
 const readDB = async (dbName, collectionName, condition = "",many = true) => {
   const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
