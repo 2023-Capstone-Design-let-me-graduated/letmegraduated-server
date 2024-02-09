@@ -1,7 +1,24 @@
 // controller
 const { createDB } = require('./db');
 
-exports.logout=(req,res,next)=>{
+exports.isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        res.status(403).send('로그인 필요');
+    }
+};
+
+exports.isNotLoggedIn = (req, res, next) => {
+    if (!req.isAuthenticated()) {
+        next();
+    } else {
+        const message = encodeURIComponent('로그인한 상태입니다.');
+        res.redirect(`/?error=${message}`);
+    }
+};
+
+exports.logout = (req, res, next) => {
 
 }
 
@@ -20,22 +37,22 @@ exports.creatUser = async (req, res, next) => {
      * eng : 영어 졸업 인증 [bool]
      * check : 신청여부 [bool]
      */
-    
+
     try {
         const newUser = {
-            userid : req.query.username,
-            password : req.query.password,
-            major : req.query.major,
-            email : req.query.email,
-            semester : req.query.semester,
-            score : 0,
-            m_score : 0,
-            m_list : [],
-            s_score : 0,
-            s_list : [],
-            eng : false,
-            check : false,
-          };
+            userid: req.query.username,
+            password: req.query.password,
+            major: req.query.major,
+            email: req.query.email,
+            semester: req.query.semester,
+            score: 0,
+            m_score: 0,
+            m_list: [],
+            s_score: 0,
+            s_list: [],
+            eng: false,
+            check: false,
+        };
         await createDB(newUser);
     } catch (err) {
         throw new Error(err);
