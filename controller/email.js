@@ -8,7 +8,7 @@ dotenv.config();
  * 보낸 인증에서는 uuidv4를 활용하여 랜덤으로 16자리 수가 들어가게 되고 이는 return으로 받게 되어 클라이언트에서 비교할 수 있습니다.
  */
 exports.emailForSignUp=(req,res,next)=>{
-  const receiverEmail = `${req.params.email}`;
+  const receiverEmail = `${req.body.email}`;
   const nodemailer = require("nodemailer");
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();

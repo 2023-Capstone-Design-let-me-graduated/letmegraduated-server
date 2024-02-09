@@ -40,11 +40,11 @@ exports.creatUser = async (req, res, next) => {
 
     try {
         const newUser = {
-            userid: req.query.username,
-            password: req.query.password,
-            major: req.query.major,
-            email: req.query.email,
-            semester: req.query.semester,
+            userid: req.body.userid,
+            password: req.body.password,
+            major: req.body.major,
+            email: req.body.email,
+            semester: req.body.semester,
             score: 0,
             m_score: 0,
             m_list: [],

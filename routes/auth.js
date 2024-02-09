@@ -8,7 +8,7 @@ const { creatUser } = require('../controller/auth');
 
 // /signup/useremail
 // emailForSignUp으로 res.send(해줘야함.)
-router.get("/signup/:email", emailForSignUp, (req, res) => res.send(req.secret));
+router.get("/signup", emailForSignUp, (req, res) => res.send(req.secret));
 
 // /signup
 // createUser
@@ -19,11 +19,11 @@ router.post('/signup', creatUser);
 router.post('/login',
     passport.authenticate('local', {
         failureRedirect: '/login',
+        failureMessage: true
     }),
     (req, res) => {
-        res.redirect('/');
+        res.redirect(`/main/${req.user.userid}`);
     });
-
 router.get('/login', (req, res) => {
     res.status(404).send("로그인 오류");
 })
