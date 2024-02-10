@@ -16,7 +16,7 @@ const app = express();
 
 // 호스트
 app.set('port', process.env.PORT || 3000);
-
+passportConfig();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

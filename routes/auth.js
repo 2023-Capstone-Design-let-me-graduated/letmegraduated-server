@@ -2,10 +2,12 @@ const express = require('express');
 const { emailForSignUp, emailForWithdrawal } = require("../controller/email");
 const router = express.Router();
 const { deleteDB, readDB } = require('../controller/db');
+const { creatUser } = require('../controller/auth');
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
-const { creatUser } = require('../controller/auth');
+var strategy = new LocalStrategy(function verify(userid, password, cb) {
 
+})
 // /signup/useremail
 // emailForSignUp으로 res.send(해줘야함.)
 router.get("/signup", emailForSignUp, (req, res) => res.send(req.secret));
@@ -27,9 +29,10 @@ router.post('/login',
 router.get('/login', (req, res) => {
     res.status(404).send("로그인 오류");
 })
-
 // logout
-router.get('/logout/:userid', (req, res) => req.logout());
+router.post('/logout', (req, res, next) => req.logout(function (err){
+    if(err) { return next(err); }
+}));
 
 // /setting/:userid
 // emailForWithdrawal 후에 userid 삭제
