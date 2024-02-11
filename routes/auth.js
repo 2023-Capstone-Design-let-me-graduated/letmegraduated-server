@@ -6,7 +6,7 @@ const { creatUser } = require('../controller/auth');
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 var strategy = new LocalStrategy(function verify(userid, password, cb) {
-
+    
 })
 // /signup/useremail
 // emailForSignUp으로 res.send(해줘야함.)

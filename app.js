@@ -14,8 +14,9 @@ const passportConfig = require('./passport');
 const app = express();
 
 
-// 호스트
+// 포트 이름 세팅
 app.set('port', process.env.PORT || 3000);
+
 passportConfig();
 app.use(logger('dev'));
 app.use(express.json());
