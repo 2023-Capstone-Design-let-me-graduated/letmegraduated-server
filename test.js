@@ -1,5 +1,5 @@
-//require("dotenv").config();
-//const { MongoClient } = require("mongodb");
+require("dotenv").config();
+const { MongoClient } = require("mongodb");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);

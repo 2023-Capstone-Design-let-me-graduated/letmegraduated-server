@@ -32,6 +32,7 @@ exports.createUser = async (req, res, next) => {
      * s_list : 교양필수 리스트 [array]
      * eng : 영어 졸업 인증 [bool]
      * check : 신청여부 [bool]
+     * certificate : 졸업 자격 기준 [bool]
      */
 
     const bcrypt = require('bcrypt');
