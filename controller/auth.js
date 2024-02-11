@@ -1,6 +1,4 @@
-// controller
-const { createDB } = require('./db');
-
+// controllers
 exports.isLoggedIn = (req, res, next) => {
     if (req.isAuthenticated()) {
         next();
@@ -36,9 +34,9 @@ exports.createUser = async (req, res, next) => {
      */
 
     const bcrypt = require('bcrypt');
-    const { createDB } = require('./controller/db');
+    const { createDB, readDB } = require('./controller/db');
     try {
-        const {userid,major,email,semester} = req.body;
+        const { userid, major, email, semester } = req.body;
         const newUser = {
             userid: userid,
             major: major,
@@ -53,10 +51,14 @@ exports.createUser = async (req, res, next) => {
             check: false,
             certificate: false,
         };
-        bcrypt.hash("password", 10, (err, hash) => {
-            newUser.password = hash;
-        })
-        await createDB(newUser);
+        if (!await readDB('userData', 'users', { email: email }, false)) {
+            bcrypt.hash("password", 10, (err, hash) => {
+                newUser.password = hash;
+            })
+            await createDB(newUser);
+        }else{
+            throw new Error("invalid email")
+        }
     } catch (err) {
         throw new Error(err);
     }

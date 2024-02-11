@@ -20,20 +20,17 @@ router.post("/signup", isNotLoggedIn, createUser);
 router.post(
   "/login",
   isNotLoggedIn,
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-    failureMessage: true,
-  }),
-  (req, res) => {
-    res.redirect(`/main/${req.user.userid}`);
-  }
-);
+  passport.authenticate('local', function (err, user) {
+    if (err) { return next(err) }
+    if (!user) { return res.redirect('/login') };
+  }, (req, res) => { res.redirect(`/main/${req.user.userid}`) }));
+
 router.get("/login", (req, res) => {
   res.status(404).send("로그인 오류");
 });
 
 // logout
-router.post("/logout", isLoggedIn,(req, res, next) =>
+router.post("/logout", isLoggedIn, (req, res, next) =>
   req.logout(function (err) {
     if (err) {
       return next(err);

@@ -14,7 +14,6 @@ const createDB = async (newUser) => {
   try {
     const create = client.db(dbName).collection(collectionName);
     await create.insertOne(newUser);
-    console.log('완료');
   } catch (err) {
     throw new Error(err);
   } finally {
