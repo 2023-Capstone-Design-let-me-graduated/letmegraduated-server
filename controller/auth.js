@@ -35,15 +35,10 @@ exports.createUser = async (req, res, next) => {
      */
 
     const bcrypt = require('bcrypt');
-
+    const { createDB } = require('./controller/db');
     try {
-        let hashPassword;
-        bcrypt.hash(req.body.password,10,(err,hash)=>{
-            hashPassword=hash;
-        })
         const newUser = {
             userid: req.body.userid,
-            password: hashPassword,
             major: req.body.major,
             email: req.body.email,
             semester: req.body.semester,
@@ -54,11 +49,13 @@ exports.createUser = async (req, res, next) => {
             s_list: [],
             eng: false,
             check: false,
+            certificate: false,
         };
+        bcrypt.hash("password", 10, (err, hash) => {
+            newUser.password = hash;
+        })
         await createDB(newUser);
     } catch (err) {
         throw new Error(err);
-    } finally {
-        await client.close();
     }
 }
