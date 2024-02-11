@@ -37,11 +37,12 @@ exports.createUser = async (req, res, next) => {
     const bcrypt = require('bcrypt');
     const { createDB } = require('./controller/db');
     try {
+        const {userid,major,email,semester} = req.body;
         const newUser = {
-            userid: req.body.userid,
-            major: req.body.major,
-            email: req.body.email,
-            semester: req.body.semester,
+            userid: userid,
+            major: major,
+            email: email,
+            semester: semester,
             score: 0,
             m_score: 0,
             m_list: [],

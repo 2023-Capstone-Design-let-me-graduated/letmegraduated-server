@@ -31,8 +31,7 @@ app.use(session({
     secure: false,
   },
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.authenticate('session'));
 app.use(indexRouter);
 app.use(authRouter);
 app.use(userRouter);

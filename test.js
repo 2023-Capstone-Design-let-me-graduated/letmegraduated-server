@@ -1,8 +1,6 @@
 //require("dotenv").config();
 //const { MongoClient } = require("mongodb");
 
-const { createUser } = require('./controller/auth');
-
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
 // // 유저를 생성하는 코드
@@ -179,4 +177,25 @@ const { createUser } = require('./controller/auth');
 
 // console.log(typeof data)
 
-createUse();
+// const bcrypt = require("bcrypt");
+
+// const salt = 12,
+//   text = "abcd",
+//   fail = "sbda";
+// let hash;
+// const start = async ()=>{
+// await bcrypt.hash(text, salt, function (err, h) {
+//   console.log("hashing", h);
+//   hash = h;
+//   console.log("complete", hash);
+// });
+// }
+// const process = async ()=>{
+// await bcrypt.compare(fail, hash, function (err, result) {
+//   console.log("fail", result);
+// });
+// await bcrypt.compare(text, hash, function (err, result) {
+//   console.log("success", result);
+// })};
+// start();
+// process();

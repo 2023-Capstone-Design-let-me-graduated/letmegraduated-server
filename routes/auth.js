@@ -15,7 +15,7 @@ router.get("/signup", isNotLoggedIn, emailForSignUp, (req, res) =>
 // createUser
 router.post("/signup", isNotLoggedIn, createUser);
 
-// /login
+// /login   
 // query: userid랑 passward받아서 상태코드 보내기, 혹은 쿠키가 존재하면 자동 로그인
 router.post(
   "/login",

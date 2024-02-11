@@ -3,11 +3,14 @@ const local = require('./localStrategy');
 const { readDB } = require('../controller/db');
 
 module.exports = () => {
-  passport.serializeUser(async (user, cb) => {
-    
+  passport.serializeUser(function (user, cb){
+    process.nextTick(function(){
+      return cb(null,user.userid);
+    })
   })
-  passport.deserializeUser(function (user, cb) {
-    return cb(null,user);
+  passport.deserializeUser(function (id, cb) {
+    const data = readDB('userData','users',{userid:id},false);
+    return cb(null,data);
   });
   local();
 };
