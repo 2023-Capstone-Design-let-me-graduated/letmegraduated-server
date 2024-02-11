@@ -1,41 +1,55 @@
-const express = require('express');
+const express = require("express");
 const { emailForSignUp, emailForWithdrawal } = require("../controller/email");
 const router = express.Router();
-const { deleteDB, readDB } = require('../controller/db');
-const { creatUser } = require('../controller/auth');
-var passport = require('passport');
-var LocalStrategy = require('passport-local');
-var strategy = new LocalStrategy(function verify(userid, password, cb) {
-    
-})
-// /signup/useremail
+const { deleteDB } = require("../controller/db");
+const { createUser, isNotLoggedIn, isLoggedIn } = require("../controller/auth");
+var passport = require("passport");
+
+// /signup
 // emailForSignUp으로 res.send(해줘야함.)
-router.get("/signup", emailForSignUp, (req, res) => res.send(req.secret));
+router.get("/signup", isNotLoggedIn, emailForSignUp, (req, res) =>
+  res.send(req.secret)
+);
 
 // /signup
 // createUser
-router.post('/signup', creatUser);
+router.post("/signup", isNotLoggedIn, createUser);
 
 // /login
 // query: userid랑 passward받아서 상태코드 보내기, 혹은 쿠키가 존재하면 자동 로그인
-router.post('/login',
-    passport.authenticate('local', {
-        failureRedirect: '/login',
-        failureMessage: true
-    }),
-    (req, res) => {
-        res.redirect(`/main/${req.user.userid}`);
-    });
-router.get('/login', (req, res) => {
-    res.status(404).send("로그인 오류");
-})
+router.post(
+  "/login",
+  isNotLoggedIn,
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    res.redirect(`/main/${req.user.userid}`);
+  }
+);
+router.get("/login", (req, res) => {
+  res.status(404).send("로그인 오류");
+});
+
 // logout
-router.post('/logout', (req, res, next) => req.logout(function (err){
-    if(err) { return next(err); }
-}));
+router.post("/logout", isLoggedIn,(req, res, next) =>
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+  })
+);
 
 // /setting/:userid
 // emailForWithdrawal 후에 userid 삭제
-router.delete('/setting/:userid', emailForWithdrawal, deleteDB("userData", "users", { username: req.params.userid }))
+router.delete(
+  "/setting/:userid",
+  isLoggedIn,
+  emailForWithdrawal,
+  (req, res) => {
+    deleteDB("userData", "users", { username: req.params.userid });
+  }
+);
 
 module.exports = router;

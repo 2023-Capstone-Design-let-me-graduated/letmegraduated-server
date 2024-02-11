@@ -18,11 +18,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     }
 };
 
-exports.logout = (req, res, next) => {
-
-}
-
-exports.creatUser = async (req, res, next) => {
+exports.createUser = async (req, res, next) => {
     /**
      * 사용자가 필요한 데이터들
      * userid : 유저이름 [string]
@@ -38,10 +34,16 @@ exports.creatUser = async (req, res, next) => {
      * check : 신청여부 [bool]
      */
 
+    const bcrypt = require('bcrypt');
+
     try {
+        let hashPassword;
+        bcrypt.hash(req.body.password,10,(err,hash)=>{
+            hashPassword=hash;
+        })
         const newUser = {
             userid: req.body.userid,
-            password: req.body.password,
+            password: hashPassword,
             major: req.body.major,
             email: req.body.email,
             semester: req.body.semester,

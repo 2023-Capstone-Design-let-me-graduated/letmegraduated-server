@@ -58,7 +58,7 @@
 //     await userDataClient.connect();
 //     const userdb = userDataClient.db("userData").collection("users");
 //     const cursor = await userdb.find().toArray();
-    
+
 //     console.log(cursor);
 //   } catch (err) {
 //     throw new Error(err);
@@ -109,14 +109,14 @@
 // const readDB = async (dbName, collectionName) => {
 //     const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
 //     const client = new MongoClient(uri);
-  
+
 //     try {
 //       await client.connect();
 //       const timeTableCollectionName = [
 //         "2019_1", "2019_2", "2020_1", "2020_2", "2021_1",
 //         "2021_2", "2022_1", "2022_2", "2023_1", "2023_2",
 //       ];
-  
+
 //       let data;
 //       if (dbName === "userData") {
 //         if (collectionName === "users") {
@@ -132,7 +132,7 @@
 //       }
 //       else if (dbName === "timeTable") {
 //         if (timeTableCollectionName.includes(collectionName)) {
-//             const database = client.db(dbName); 
+//             const database = client.db(dbName);
 //             const coll = database.collection(collectionName);
 //             data = await coll.find().toArray();
 //             console.log(data);
@@ -144,7 +144,7 @@
 //       }
 //       else if (dbName === "criteria") {
 //         if (collectionName === "exam") {
-//             const database = client.db(dbName); 
+//             const database = client.db(dbName);
 //             const coll = database.collection(collectionName);
 //             data = await coll.find().toArray();
 //             console.log(data);
@@ -165,15 +165,33 @@
 //   }
 //   readDB("timeTable", "2019_1");
 
-
 /**
  * 이승현 테스트 코드
  */
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
-const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
+// const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
 
-const data = readDB("userData","users",{username : "testuser"})
+// const data = readDB("userData","users",{username : "testuser"})
 
-console.log(typeof data)
+// console.log(typeof data)
+
+const bcrypt = require("bcrypt");
+
+const salt = 12,
+  text = "abcd",
+  fail = "sbda";
+let hash;
+
+bcrypt.hash(text, salt, function (err, h) {
+  console.log("hashing", h);
+  hash = h;
+  console.log("complete", hash);
+});
+bcrypt.compare(fail, hash, function (err, result) {
+  console.log("fail", result);
+});
+bcrypt.compare(text, hash, function (err, result) {
+  console.log("success", result);
+});

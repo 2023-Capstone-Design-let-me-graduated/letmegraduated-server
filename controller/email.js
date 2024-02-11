@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 /**
  *
@@ -7,12 +7,12 @@ dotenv.config();
  * 사용자의 이메일을 받으면 Oauth 인증을 통해서 robot9917@gmail.com에서 해당 이메일로 인증을 보내게 됩니다.
  * 보낸 인증에서는 uuidv4를 활용하여 랜덤으로 16자리 수가 들어가게 되고 이는 return으로 받게 되어 클라이언트에서 비교할 수 있습니다.
  */
-exports.emailForSignUp=(req,res,next)=>{
+exports.emailForSignUp = (req, res, next) => {
   const receiverEmail = `${req.body.email}`;
   const nodemailer = require("nodemailer");
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();
-  req.secret=secretCode;
+  req.secret = secretCode;
   const {
     OAUTH_USER,
     OAUTH_CLIENT_ID,
@@ -55,7 +55,7 @@ exports.emailForSignUp=(req,res,next)=>{
   }
   main(receiverEmail);
   next();
-}
+};
 
 /**
  *
@@ -64,7 +64,7 @@ exports.emailForSignUp=(req,res,next)=>{
  * 회원 데이터에 있는 이메일을 꺼내서 탈퇴가 완료되었음을 나타내는 이메일을 보냅니다.
  * 탈퇴 전에 호출해야 합니다.
  */
-exports.emailForWithdrawal=(req,res,next)=>{
+exports.emailForWithdrawal = (req, res, next) => {
   const userId = req.params.userId;
   const nodemailer = require("nodemailer");
   const db = require("./db");
@@ -75,7 +75,12 @@ exports.emailForWithdrawal=(req,res,next)=>{
     OAUTH_REFRESH_TOKEN,
   } = process.env;
 
-  const receiverEmail = db.readDB("userData","users",{username:userId},false).email;
+  const receiverEmail = db.readDB(
+    "userData",
+    "users",
+    { username: userId },
+    false
+  ).email;
 
   async function main(receiverEmail) {
     const transporter = nodemailer.createTransport({
@@ -111,6 +116,6 @@ exports.emailForWithdrawal=(req,res,next)=>{
     };
     await transporter.sendMail(message);
   }
-  main(receiverEmail)//parameter로 receiverEmail 받아야 함.
+  main(receiverEmail); //parameter로 receiverEmail 받아야 함.
   next();
-}
+};
