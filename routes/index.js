@@ -10,8 +10,28 @@ router.put('/main/:userid', userExam);
 
 // major
 
+// get /semester
+
+// get /need
+
+// get
+
+// put
+
 // minor
 
+// get /semester
+
+// get /need
+
+// get
+
+// put
+
 // normal
+
+// put
+
+// get
 
 module.exports = router;

@@ -6,10 +6,10 @@
 | /login | GET | | 로그인 실패 | state: 404 | O |
 | /main/userid | GET |  | 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 점수 조건 |  |  |
 | /main/userid | PUT |  | 영어 졸업인증 요건 true/false |  |  |
-| /major/userid/semester | GET |  | semester중에서 major 전필, 전선 |  |  |
-| /major/userid/need | GET |  |  score collection 꺼내서 필요 전공필수 과목, 전공 학점 |  |  |
-| /major/userid | GET |  | userid의 수강학기 |  |  |
-| /major/userid | PUT |  | userid에 선택된 전공과목, 전공 학점이 업데이트 된다. (중복 허용X) |  |  |
+| /major/semester | GET | req.user.userid(session에 담겨있음) | semester중에서 major 전필, 전선 |  |  |
+| /major/need | GET | req.user.userid(session에 담겨있음) |  score collection 꺼내서 필요 전공필수 과목, 전공 학점 |  |  |
+| /major | GET | req.user.userid(session에 담겨있음) | userid의 수강학기 |  |  |
+| /major | PUT | req.user.userid(session에 담겨있음) | userid에 선택된 전공과목, 전공 학점이 업데이트 된다. (중복 허용X) |  |  |
 | /minor/userid/semester | GET |  | semester중에서 minor 인데 c_area기준으로 카테고리 나눠서 |  |  |
 | /minor/userid/need | GET |  |  score collection 꺼내서 필요 교양 카테고리, 교양 학점 |  |  |
 | /minor/userid | GET |  | userid의 수강학기 |  |  |
