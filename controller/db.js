@@ -32,7 +32,7 @@ const createDB = async (newUser) => {
  * condition은 객체이다.
  * many가 ture가 아니면 하나만 반환, 기본값은 전체 가져오기
  */
-const readDB = async (dbName, collectionName, condition = "",many = true) => {
+const readDB = async (dbName, collectionName, condition = {},many = true) => {
   const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
   const client = new MongoClient(uri);
   const database = client.db(dbName);
