@@ -3,19 +3,19 @@ const { createDB, readDB, updateDB, deleteDB } = require('./db');
 
 // /main/:userid GET
 // 한명의 유저 데이터 내용을 가져옴
-exports.readUserPull = async(req, res, next) => {
+exports.readUserPull = async (req, res, next) => {
     /**
      * dbName은 userData
      * collectionName은 users
      * conditionName은 { userid : "이름" } 형식으로 받음 
      */
-    
-    let conditionName = { userid : req.body.userid };
+
+    let conditionName = { userid: req.body.userid };
 
     try {
         let user = await readDB("userData", "users", conditionName, false);
         if (!user) {
-            return res.status(404).json({ message : '유저를 찾을 수 없음' });
+            return res.status(404).json({ message: '유저를 찾을 수 없음' });
         } else {
             return res.status(200).json(user);
         }
@@ -27,56 +27,56 @@ exports.readUserPull = async(req, res, next) => {
 
 // /main:userid PUT
 // 유저의 영어인증요건(eng)를 true로 업데이트
-exports.updataUserExam = async(req, res, next) => {   
-     /**
-     * dbName은 userData
-     * collectionName은 users
-     * conditionName은 { username : "이름" } 형식으로 받음
-     */
-    
-    let conditionName = { userid : req.body.userid };
+exports.updataUserExam = async (req, res, next) => {
+    /**
+    * dbName은 userData
+    * collectionName은 users
+    * conditionName은 { username : "이름" } 형식으로 받음
+    */
+
+    let conditionName = { userid: req.body.userid };
     let swap_t_f = req.body.swap_t_f; // 입력 받은 값이 true인지 false인지 판별
-    
+
     try {
         let user = await readDB("userData", "users", conditionName, false);
-        let engChange = { eng : swap_t_f };
+        let engChange = { eng: swap_t_f };
         if (!user) {
-            return res.status(404).json({ message : '유저를 찾을 수 없음' });
+            return res.status(404).json({ message: '유저를 찾을 수 없음' });
         } else {
             if (swap_t_f) {
                 await updateDB("userData", "users", conditionName, engChange);
             }
         }
-    } catch(err) {
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /main/:userid/semester GET
 // timetable에 있는 전체 시간표를 클라이언트에 보냄
-exports.readAllSemester =  async(req, res, next) => {
+exports.readAllSemester = async (req, res, next) => {
     /**
      * dbName은 timeTabel
      * collectionName은 2019_1 ~ 2023_2
      */
-    
+
     let collectionName = req.body.collectionName;
 
     try {
         let allsemester = await readDB("timeTable", collectionName);
         return res.status(200).json(allsemester);
-    } catch(err) {
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /main/:userid/score PUT
 // 전체 학점, 전공 학점, 교양 학점을 업데이트 함
-exports.updataUserScore = async(req, res, next) => {
+exports.updataUserScore = async (req, res, next) => {
     /**
      * coditionName은 유저아이디
      */
-    let conditionName = { userid : req.body.userid };
+    let conditionName = { userid: req.body.userid };
     let m_score = req.body.m_score;
     let s_score = req.body.s_score;
     let score = m_score + s_score;
@@ -84,41 +84,41 @@ exports.updataUserScore = async(req, res, next) => {
     try {
         let user = await readDB("userData", "users", conditionName, false);
         if (!user) {
-            return res.status(404).json({ message : '유저를 찾을 수 없음' });
+            return res.status(404).json({ message: '유저를 찾을 수 없음' });
         } else {
-            await updateDB("userData", "users", conditionName, {m_score : user.m_score + m_score});
-            await updateDB("userData", "users", conditionName, {s_score : user.s_score + s_score});
-            await updateDB("userData", "users", conditionName, {score : user.score + score});
+            await updateDB("userData", "users", conditionName, { m_score: user.m_score + m_score });
+            await updateDB("userData", "users", conditionName, { s_score: user.s_score + s_score });
+            await updateDB("userData", "users", conditionName, { score: user.score + score });
         }
-    } catch(err) {
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /main/:userid/list PUT
 // 유저의 전공 필수 리스트, 교양 필수 리스트 업데이트
-exports.updataUserList = async(req, res, next) => {
-    
-    let conditionName = { userid : req.body.userid };
+exports.updataUserList = async (req, res, next) => {
+
+    let conditionName = { userid: req.body.userid };
     let sectionSort = req.body.listName; // 리스트 이름에 따라 전공, 교양 구분
     let list = req.body.list; // 배열로 받음
-    
+
     try {
         let user = await readDB("userData", "users", conditionName, false);
         if (!user) {
-            return res.status(404).json({ message : '유저를 찾을 수 없음' });
+            return res.status(404).json({ message: '유저를 찾을 수 없음' });
         } else {
             if (sectionSort === "m_list") {
                 list.forEach(value => {
                     if (!user.m_list.includes(value)) {
-                        updateDB("userData", "users", conditionName, {m_list : value});
+                        updateDB("userData", "users", conditionName, { m_list: value });
                     }
                 });
             }
             else if (sectionSort === "s_list") {
                 list.forEach(value => {
                     if (!user.s_list.includes(value)) {
-                        updateDB("userData", "users", conditionName, {s_list : value});
+                        updateDB("userData", "users", conditionName, { s_list: value });
                     }
                 });
             }
@@ -126,64 +126,82 @@ exports.updataUserList = async(req, res, next) => {
                 throw new Error(err);
             }
         }
-    } catch(err) {
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /main/:userid/engcheck PUT
 // 유저가 영어 졸업인증 신청을 했는 확인
-exports.userEngCheck = async(req, res, next) => {
-    
-    let conditionName = { userid : req.body.userid };
+exports.userEngCheck = async (req, res, next) => {
+
+    let conditionName = { userid: req.body.userid };
     let swap_t_f = req.body.swap_t_f; // 입력 받은 값이 true인지 false인지 판별
 
     try {
         let user = await readDB("userData", "users", conditionName, false);
-        let Change = { check : swap_t_f };
+        let Change = { check: swap_t_f };
         if (!user) {
-            return res.status(404).json({ message : '유저를 찾을 수 없음' });
+            return res.status(404).json({ message: '유저를 찾을 수 없음' });
         } else {
             if (swap_t_f) {
                 await updateDB("userData", "users", conditionName, Change);
             }
         }
-    } catch(err) {
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /major/semester GET
-// timetable에서 전공필수, 전공선택만 가져옴
-exports.readMajor = async(req, res, next) => {
+// timetable에서 전공필수, 전공선택을 가져옴 (해당 유저의 데이터만 가져와야한다.)
+exports.readMajor = async (req, res, next) => {
     /**
      * dbName = timeTable
-     * collectionName = "2019_1 ~ 2023_2"
+     * collectionName = "2019_1 ~ 2023_2" (범위)
      * conditionName = { c_area : /전공/i }
      */
-    let collectionName = req.body.collectionName;
+    let collections = req.user.semester;
     try {
-        const readM = await readDB("timeTable", collectionName, { c_area : /전공/i });
-        return res.status(200).json(readM);
-    } catch(err) {
+        major = { need: {}, choice: {} };
+        collections.forEach(async (value) => {
+            major.need[value] = [];
+            major.choice[value] = [];
+            const data = await readDB("timeTable", value, { c_area: /전공/i });
+            data.forEach((v) => {
+                if (v.c_area.endsWith == "핵심" || v.c_area.endsWith == "필수") {
+                    major.need[value].push(v);
+                } else if (v.c_area.endsWith == "심화" || v.c_area.endsWith == "선택") {
+                    major.choice[value].push(v);
+                }
+            })
+        })
+        return res.status(200).json(major);
+    } catch (err) {
         throw new Error(err);
     }
 }
 
 // /minor/semester GET
-// timetable에서 교양필수 가져옴
+// timetable에서 교양필수 가져옴 (해당 유저의 데이터만 가져와야 한다.)
 exports.readMinor = async (req, res, next) => {
     /**
      * dbName = timeTable
-     * collectionName = "2019_1 ~ 2023_2"
+     * collectionName = "2019_1 ~ 2023_2" (해당 범위)
      * conditionName = {c_area : { "$regex": /INU|기초교양/i}}
-     * conditionName = { c_area : /INU/i }
+     * return minor = {need:{"2019_1":[과목들],"2019_2":[과목들] ... }}
      */
-    let collectionName = req.body.collectionName;
-    
+    let collections = req.user.semester;
     try {
-        const readM = await readDB("timeTable", collectionName, { c_area : { "$regex": /INU|기초교양/i } });
-        return res.status(200).json(readM);
+        minor = { need: {} };
+        collections.forEach(async (value) => {
+            major.need[value] = [];
+            const data = await readDB("timeTable", value, { c_area: { "$regex": /INU|기초교양/i } });
+            data.forEach((v) => {
+                minor.need[value].push(v);
+            })
+        })
+        return res.status(200).json(major);
     } catch (err) {
         throw new Error(err);
     }

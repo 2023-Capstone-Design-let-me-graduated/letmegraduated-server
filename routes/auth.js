@@ -22,12 +22,8 @@ router.post(
   isNotLoggedIn,
   passport.authenticate('local', function (err, user) {
     if (err) { return next(err) }
-    if (!user) { return res.redirect('/login') };
+    if (!user) { return res.status(404).send('로그인 오류') };
   }, (req, res) => { res.redirect(`/main/${req.user.userid}`) }));
-
-router.get("/login", (req, res) => {
-  res.status(404).send("로그인 오류");
-});
 
 // logout
 router.post("/logout", isLoggedIn, (req, res, next) =>

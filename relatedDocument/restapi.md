@@ -2,8 +2,7 @@
 | --- | --- | --- | --- | --- | --- |
 | /signup/:email | GET | request.params.email{string} | nodemailer 모듈로 랜덤 수 4자리 보내서 클라이언트로 4자리 전달 | {string} | O |
 |  /signup | POST | req.body.userid, req.body.password, req.body.major, req.body.email, req.body.semester | 아이디 비번, 학적, 수강학기, 자격기준 점수 조건(false), 영어 졸업인증 요건,취득 학점, 전공, 교양, 이메일 기본 설정해서 회원 가입 |  |  |
-| /login | POST | request.query.userid, request.qrery.passward | 로그인해서 접근, 자동 로그인기능 추가 | 실패시 : 401 |  |
-| /login | GET | | 로그인 실패 | state: 404 | O |
+| /login | POST | request.query.userid, request.qrery.passward | 로그인해서 접근, 자동 로그인기능 추가 | 실패시 : 404 성공시 : 리다이렉트 /main/userid |  |
 | /main/userid | GET | req.body.userid | 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건 | object(array) | O |
 | /main/userid | PUT | req.body.userid, req.body.swap_t_f{bool} | 영어 졸업인증 요건 true/false로 업데이트 | 리턴 없음 | O |
 | /main/userid/semester | GET | req.body.collectionName | 몽고DB에 있는 timtable불러옴2019_1~2023_2 | object(array) | O |

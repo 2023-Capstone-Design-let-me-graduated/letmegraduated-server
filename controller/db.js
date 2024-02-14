@@ -94,7 +94,6 @@ const updateDB = async (dbName, collectionName, condition, change) => {
 const deleteDB = async (dbName, collectionName, condition) => {
   const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
   const client = new MongoClient(uri);
-  console.log(uri);
   const database = client.db(dbName);
   const coll = database.collection(collectionName);
   try {

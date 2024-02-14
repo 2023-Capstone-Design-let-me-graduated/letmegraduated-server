@@ -12,7 +12,7 @@ exports.isNotLoggedIn = (req, res, next) => {
         next();
     } else {
         const message = encodeURIComponent('로그인한 상태입니다.');
-        res.redirect(`/?error=${message}`);
+        throw new Error('이미 로그인한 상태입니다.')
     }
 };
 
@@ -32,9 +32,8 @@ exports.createUser = async (req, res, next) => {
      * check : 신청여부 [bool]
      * certificate : 졸업 자격 기준 [bool]
      */
-
     const bcrypt = require('bcrypt');
-    const { createDB, readDB } = require('./controller/db');
+    const { createDB, readDB } = require('./db');
     try {
         const { userid, major, email, semester } = req.body;
         const newUser = {
@@ -51,11 +50,11 @@ exports.createUser = async (req, res, next) => {
             check: false,
             certificate: false,
         };
-        if (!await readDB('userData', 'users', { email: email }, false)) {
-            bcrypt.hash("password", 10, (err, hash) => {
-                newUser.password = hash;
-            })
+        const invalidcheck = await readDB('userData', 'users', { email: email }, false);
+        if (!invalidcheck) {
+            newUser.password = await bcrypt.hash(req.body.password, 10);
             await createDB(newUser);
+            res.status(201).json({message: 'User created successfully'});
         }else{
             throw new Error("invalid email")
         }
