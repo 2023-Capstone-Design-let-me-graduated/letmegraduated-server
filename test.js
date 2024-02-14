@@ -181,7 +181,27 @@ const { MongoClient } = require("mongodb");
 // }
 // userScore(); 
 
+const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
 
+// const readMinor = async (req, res, next) => {
+//     /**
+//      * dbName = timeTable
+//      * collectionName = "2019_1 ~ 2023_2"
+//      * conditionName = {c_area : { "$regex": /INU|기초교양/i}}
+//      * conditionName = { c_area : /INU/i }
+//      */
+//     let collectionName = "2019_1";
+    
+//     try {
+//         const readM = await readDB("timeTable", collectionName, { "c_area": { "$regex": /INU|기초교양/i } });
+//         console.log(readM);
+        
+//     } catch (err) {
+//         throw new Error(err);
+//     }
+// };
+
+// readMinor();
 
 /**
  * 이승현 테스트 코드
