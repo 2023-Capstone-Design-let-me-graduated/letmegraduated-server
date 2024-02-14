@@ -9,5 +9,5 @@ router.get('/exam/:userid', examPull);
 router.put('/exam/:userid',userPullCheck);
 
 // userid를 삭제
-router.delete('/setting/:userid', userDelete);
+// router.delete('/setting/:userid', userDelete);
 module.exports = router;

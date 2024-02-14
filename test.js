@@ -1,6 +1,5 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
-const { readDB } = require("./controller/db");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
@@ -107,64 +106,82 @@ const { readDB } = require("./controller/db");
 // }
 // createDB(newUser);
 
-// const readDB = async (dbName, collectionName) => {
-//     const uri = `mongodb+srv://abc:abc@cluster0.tfhjsuj.mongodb.net/`;
-//     const client = new MongoClient(uri);
+
+// const allSemester =  async(req, res, next) => {
+//     /**
+//      * dbName은 timeTabel
+//      * collectionName은 2019_1 ~ 2023_2
+//      */
+//     let dbName = "timeTable";
+//     let collectionName = "2019_1";
 
 //     try {
-//       await client.connect();
-//       const timeTableCollectionName = [
-//         "2019_1", "2019_2", "2020_1", "2020_2", "2021_1",
-//         "2021_2", "2022_1", "2022_2", "2023_1", "2023_2",
-//       ];
-
-//       let data;
-//       if (dbName === "userData") {
-//         if (collectionName === "users") {
-//             const database = client.db(dbName);
-//             const coll = database.collection(collectionName);
-//             data = await coll.find().toArray();
-//             console.log(data);
-//             return data;
-//         }
-//         else {
-//             throw new Error(err);
-//         }
-//       }
-//       else if (dbName === "timeTable") {
-//         if (timeTableCollectionName.includes(collectionName)) {
-//             const database = client.db(dbName);
-//             const coll = database.collection(collectionName);
-//             data = await coll.find().toArray();
-//             console.log(data);
-//             return data;
-//         }
-//         else {
-//             throw new Error(err);
-//         }
-//       }
-//       else if (dbName === "criteria") {
-//         if (collectionName === "exam") {
-//             const database = client.db(dbName);
-//             const coll = database.collection(collectionName);
-//             data = await coll.find().toArray();
-//             console.log(data);
-//             return data;
-//         }
-//         else {
-//             throw new Error(err);
-//         }
-//       }
-//       else {
+//         let allsemester = await readDB(dbName, collectionName);
+//         console.log(allsemester);
+//     } catch(err) {
 //         throw new Error(err);
-//       }
-//     } catch (err) {
-//       throw new Error(err);
-//     } finally {
-//       await client.close();
 //     }
-//   }
-//   readDB("timeTable", "2019_1");
+// }
+// allSemester();
+
+// const { readDB, updateDB } = require("./controller/db");
+
+// const userList = async(req, res, next) => {
+//     /**
+//      * 유저의 전공 필수 리스트, 교양 필수 리스트 업데이트
+//      */
+//     let conditionName = { userid : "테스트유저1" };
+//     let sectionSort = "s_list"; // 리스트 이름에 따라 전공, 교양 구분
+//     let list = ['테스트1','테스트2', '테스트3']; // 리스트로 받음
+    
+
+//     try {
+//         let user = await readDB("userData", "users", conditionName, false);
+//         if (!user) {
+//             return res.status(404).json({ message : '유저를 찾을 수 없음' });
+//         } else {
+//             if (sectionSort === "m_list") {
+//                 await updateDB("userData", "users", conditionName, {m_list : list});
+//             }
+//             else if (sectionSort === "s_list") {
+//                 await updateDB("userData", "users", conditionName, {s_list : list});
+//             }
+//             else {
+//                 throw new Error(err);
+//             }
+//         }
+//     } catch(err) {
+//         throw new Error(err);
+//     }
+// }
+// userList();
+
+// userScore = async(req, res, next) => {
+//     /**
+//      * coditionName은 유저아이디
+//      * 전체 학점, 전공 학점, 교양 학점을 업데이트 함
+//      */
+//     let conditionName = "테스트유저1";
+//     let m_score = 3;
+//     let s_score = 2;
+//     let score = m_score + s_score;
+
+//     try {
+//         let user = await readDB("userData", "users", {userid : conditionName}, false);
+//         if (!user) {
+//             return res.status(404).json({ message : '유저를 찾을 수 없음' });
+//         } else {
+//             await updateDB("userData", "users", {userid : conditionName}, {m_score : user.m_score + m_score});
+//             await updateDB("userData", "users", {userid : conditionName}, {s_score : user.s_score + s_score});
+//             await updateDB("userData", "users", {userid : conditionName}, {score : user.score + score});
+//         }
+//     } catch(err) {
+//         throw new Error(err);
+//     }
+// }
+// userScore(); 
+
+
 
 /**
  * 이승현 테스트 코드
