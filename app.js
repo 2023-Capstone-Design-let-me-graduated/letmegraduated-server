@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const passport = require("passport");
-//test용 
-const bodyParser = require('body-parser');
+//test용
+const bodyParser = require("body-parser");
 dotenv.config();
 
 const express = require("express");
@@ -18,7 +18,7 @@ const app = express();
 // 포트 이름 세팅
 app.set("port", process.env.PORT || 3000);
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
 passportConfig();
 app.use(logger("dev"));
@@ -38,7 +38,13 @@ app.use(
 );
 
 //테스트 html
-app.get('',(req,res)=>{res.sendFile(__dirname+'/index.html')})
+app.get("", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
+app.get("/login.html", (req, res) => {
+  res.sendFile(__dirname + "/login.html");
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.authenticate("session"));
@@ -52,7 +58,7 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
   // render the error page
   res.status(err.status || 500);
-  res.send(err+"오류 입니다.");
+  res.send(err + "오류 입니다.");
 });
 
 app.listen(app.get("port"), (req, res, next) => {
