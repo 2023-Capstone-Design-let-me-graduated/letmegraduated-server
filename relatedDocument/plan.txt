@@ -1,11 +1,9 @@
-남는 시간에 하는건
-codefug : auth쪽
-seonkkk : user쪽
-둘다 끝나면 index
-7. seonkkk(c r), codefug(u d)
-8. seonkkk user, codefug auth 끝내기
-9. 위에서부터 2개씩 완료
-10. 
-11. 끝내고
-12. 배포 aws 이런거
-13. 테스트
+승현
+
+login 확인, 배포
+
+팀
+
+criteria > score에 졸업 요건 담기 (교양필수 카테고리 리스트, 전공필수, 필요학점, 필요 전공 학점, 필요 교양 학점, 
+시험 종류에 따른 점수(array))
+userpullcheck > 교양 필수쪽 정리, 오픽 시험 처리 함수 작성

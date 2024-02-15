@@ -1,7 +1,6 @@
 // controller
 const { readDB, updateDB, deleteDB } = require('./db');
 
-
 // /exam/userid GET
 // 주간, 야간 영어 시험 종류를 가져옴
 exports.examPull = async(req, res, next) => {
