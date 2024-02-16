@@ -1,12 +1,12 @@
 // auth
 exports.isLoggedIn = (req, res, next) => {
-  try{
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    throw new Error("(로그인이 필요한 서비스)");
-  }}
-  catch(err){
+  try {
+    if (req.isAuthenticated()) {
+      next();
+    } else {
+      throw new Error("(로그인이 필요한 서비스)");
+    }
+  } catch (err) {
     next(err);
   }
 };
@@ -54,10 +54,10 @@ exports.createUser = async (req, res, next) => {
       score: 0,
       m_score: 0,
       m_list: [],
-      m_need_score : 0,
+      m_need_score: 0,
       m_check: false,
       s_score: 0,
-      s_list: {sNeedList:[],sFoundamentalList:[]},
+      s_list: { sNeedList: [], sFoundamentalList: [] },
       s_check: false,
       eng: false,
       engcheck: false,

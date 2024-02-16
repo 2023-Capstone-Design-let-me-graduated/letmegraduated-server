@@ -9,5 +9,5 @@ const { readDB } = require("./db");
 exports.checkScore = async (type, score) => {
   const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
   const criteria = data[type];
-  return criteria<=score;
+  return criteria <= score;
 };
