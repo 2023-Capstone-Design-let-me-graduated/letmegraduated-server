@@ -5,23 +5,13 @@ const { check } = require("./check");
 // /main PUT
 // 유저의 영어인증요건(eng)를 true로 업데이트
 exports.updataUserExam = async (req, res, next) => {
-  if (req.user.eng){
-    updateDB("userData","users",{userid : req.user.userid},{engcheck :req.body.engcheck})
-  }
-};
-
-// /main/semester GET
-// 
-exports.readAllSemester = async (req, res, next) => {
-  /**
-   * dbName은 timeTabel
-   * collectionName은 2019_1 ~ 2023_2
-   */
-
-  try {
-    return res.status(200).json(req.user.semester);
-  } catch (err) {
-    next(err);
+  if (req.user.eng) {
+    await updateDB(
+      "userData",
+      "users",
+      { userid: req.user.userid },
+      { engcheck: req.body.engcheck }
+    );
   }
 };
 
@@ -166,7 +156,7 @@ exports.readMinor = async (req, res, next) => {
   }
 };
 
-exports.takeSemester=(req,res,next)=>{
+exports.takeSemester = (req, res, next) => {
   res.json(req.user.semester);
 }
 
