@@ -181,7 +181,53 @@ const { MongoClient } = require("mongodb");
 // }
 // userScore(); 
 
-const {createDB,updateDB,deleteDB, readDB} = require('./controller/db');
+/**
+ * criteria > score에 졸업 요건 담기 (교양필수 카테고리 리스트, 전공필수, 필요학점, 필요 전공 학점, 필요 교양 학점, 
+시험 종류에 따른 점수(array))
+ */ 
+// const requirement = async() => {
+//     const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
+//     const dbName = "criteria";
+//     const collectionName = "score";
+//     const client = new MongoClient(uri);
+//     const requirement = {
+//         score: 140,
+//         s_score: 30,
+//         s_list: {
+//             "기초교양": ["Academic English", "글쓰기이론과실제", "대학영어회화1", "대학영어회화2", "대학수학(1)", "대학수학(2)"],
+//             "교양필수": ["INU핵심글로벌", "INU핵심리더십", "INU핵심문제해결", "INU핵심창의융합", "INU핵심의사소통"],
+//         },
+//         m_score: 72,
+//         m_list: ["전공필수"],
+//         engDay : {
+//             "TOECIT": ["700"],
+//             "TOEFL(IBT)": ["82"],
+//             "NEW TEPS": ["264"],
+//             "IELTS": ["6.5"],
+//             "TOEIC SPEAKING": ["130"],
+//             "TOEIC WRITING": ["140"],
+//             "OPIC": ["IM", "IH", "AL"],
+//         },
+//         engNight : {
+//             "TOECIT": ["600"],
+//             "TOEFL(IBT)": ["68"],
+//             "NEW TEPS": ["227"],
+//             "IELTS": ["5.5"],
+//             "TOEIC SPEAKING": ["110"],
+//             "TOEIC WRITING": ["120"],
+//             "OPIC": ["IL", "IM", "IH", "AL"],
+//         }
+//       };
+//     try {
+//         const create = client.db(dbName).collection(collectionName);
+//         await create.insertOne(requirement);
+//     } catch (err) {
+//         throw new Error(err);
+//     } finally {
+//         await client.close();
+//     }
+// }
+// requirement();
 
 // const readMinor = async (req, res, next) => {
 //     /**
