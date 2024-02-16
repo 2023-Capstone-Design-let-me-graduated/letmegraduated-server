@@ -33,7 +33,7 @@ exports.updataUserExam = async (req, res, next) => {
    * conditionName은 { username : "이름" } 형식으로 받음
    */
 
-  let conditionName = { userid: req.body.userid };
+  let conditionName = { userid: req.user.userid };
   let swap_t_f = req.body.swap_t_f; // 입력 받은 값이 true인지 false인지 판별
 
   try {
@@ -205,4 +205,12 @@ exports.readMinor = async (req, res, next) => {
   } catch (err) {
     throw new Error(err);
   }
+};
+
+exports.readUserCourse = async(req, res, next) => {
+  /**
+   * 유저가 들은 수강학기
+   * 
+   */
+
 };

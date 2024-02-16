@@ -198,7 +198,8 @@ const { MongoClient } = require("mongodb");
 //             "교양필수": ["INU핵심글로벌", "INU핵심리더십", "INU핵심문제해결", "INU핵심창의융합", "INU핵심의사소통"],
 //         },
 //         m_score: 72,
-//         m_list: ["전공필수"],
+//         m_need_score: 19,
+//         m_list: ["자료구조", "Java언어", "C++언어", "알고리즘", "컴퓨터네트워크", "컴퓨터구조", "데이터베이스", "운영체제", "캡스톤디자인(1)", "캡스톤디자인(2)"],
 //         engDay : {
 //             "TOECIT": ["700"],
 //             "TOEFL(IBT)": ["82"],
@@ -228,6 +229,32 @@ const { MongoClient } = require("mongodb");
 //     }
 // }
 // requirement();
+
+const readMinor = async (req, res, next) => {
+/**
+ * dbName = timeTable
+ * collectionName = "2019_1 ~ 2023_2" (해당 범위)
+ * conditionName = {c_area : { "$regex": /INU|기초교양/i}}
+ * return minor = {need:{"2019_1":[과목들],"2019_2":[과목들] ... }}
+ */
+let collections = "2019_1";
+try {
+    minor = { need: {} };
+    collections.forEach(async (value) => {
+    major.need[value] = [];
+    const data = await readDB("timeTable", value, {
+        c_area: { $regex: /INU|기초교양/i },
+    });
+    data.forEach((v) => {
+        minor.need[value].push(v);
+    });
+    });
+    console.log(minor);
+} catch (err) {
+    throw new Error(err);
+}
+};
+readMinor();
 
 // const readMinor = async (req, res, next) => {
 //     /**
