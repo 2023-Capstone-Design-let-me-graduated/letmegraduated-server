@@ -230,31 +230,37 @@ const { MongoClient } = require("mongodb");
 // }
 // requirement();
 
-const readMinor = async (req, res, next) => {
-/**
- * dbName = timeTable
- * collectionName = "2019_1 ~ 2023_2" (해당 범위)
- * conditionName = {c_area : { "$regex": /INU|기초교양/i}}
- * return minor = {need:{"2019_1":[과목들],"2019_2":[과목들] ... }}
- */
-let collections = "2019_1";
-try {
-    minor = { need: {} };
-    collections.forEach(async (value) => {
-    major.need[value] = [];
-    const data = await readDB("timeTable", value, {
-        c_area: { $regex: /INU|기초교양/i },
-    });
-    data.forEach((v) => {
-        minor.need[value].push(v);
-    });
-    });
-    console.log(minor);
-} catch (err) {
-    throw new Error(err);
-}
-};
-readMinor();
+// const requirement = {
+//     score: 140,
+//     s_score: 30,
+//     s_list: {
+//         "기초교양": ["Academic English", "글쓰기이론과실제", "대학영어회화1", "대학영어회화2", "대학수학(1)", "대학수학(2)"],
+//         "교양필수": ["INU핵심글로벌", "INU핵심리더십", "INU핵심문제해결", "INU핵심창의융합", "INU핵심의사소통"],
+//     },
+//     m_score: 72,
+//     m_need_score: 19,
+//     m_list: ["자료구조", "Java언어", "C++언어", "알고리즘", "컴퓨터네트워크", "컴퓨터구조", "데이터베이스", "운영체제", "캡스톤디자인(1)", "캡스톤디자인(2)"],
+//     engDay : {
+//         "TOECIT": ["700"],
+//         "TOEFL(IBT)": ["82"],
+//         "NEW TEPS": ["264"],
+//         "IELTS": ["6.5"],
+//         "TOEIC SPEAKING": ["130"],
+//         "TOEIC WRITING": ["140"],
+//         "OPIC": ["IM", "IH", "AL"],
+//     },
+//     engNight : {
+//         "TOECIT": ["600"],
+//         "TOEFL(IBT)": ["68"],
+//         "NEW TEPS": ["227"],
+//         "IELTS": ["5.5"],
+//         "TOEIC SPEAKING": ["110"],
+//         "TOEIC WRITING": ["120"],
+//         "OPIC": ["IL", "IM", "IH", "AL"],
+//     }
+//     };
+
+
 
 // const readMinor = async (req, res, next) => {
 //     /**

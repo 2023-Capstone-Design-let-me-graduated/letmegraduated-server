@@ -1,53 +1,12 @@
-// controller
+// index
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
-
-// /main GET
-// 한명의 유저 데이터 내용을 가져옴
-exports.readUserPull = async (req, res, next) => {
-  /**
-   * dbName은 userData
-   * collectionName은 users
-   * conditionName은 { userid : "이름" } 형식으로 받음
-   */
-
-  let conditionName = { userid: req.user.userid };
-
-  try {
-    let user = await readDB("userData", "users", conditionName, false);
-    if (!user) {
-      return res.status(404).json({ message: "유저를 찾을 수 없음" });
-    } else {
-      return res.status(200).json(user);
-    }
-  } catch (err) {
-    throw new Error(err);
-  }
-};
+const { check } = require("./check");
 
 // /main PUT
 // 유저의 영어인증요건(eng)를 true로 업데이트
 exports.updataUserExam = async (req, res, next) => {
-  /**
-   * dbName은 userData
-   * collectionName은 users
-   * conditionName은 { username : "이름" } 형식으로 받음
-   */
-
-  let conditionName = { userid: req.user.userid };
-  let swap_t_f = req.body.swap_t_f; // 입력 받은 값이 true인지 false인지 판별
-
-  try {
-    let user = await readDB("userData", "users", conditionName, false);
-    let engChange = { eng: swap_t_f };
-    if (!user) {
-      return res.status(404).json({ message: "유저를 찾을 수 없음" });
-    } else {
-      if (swap_t_f) {
-        await updateDB("userData", "users", conditionName, engChange);
-      }
-    }
-  } catch (err) {
-    throw new Error(err);
+  if (req.user.eng){
+    updateDB("userData","users",{userid : req.user.userid},{engcheck :req.body.engcheck})
   }
 };
 
@@ -72,7 +31,7 @@ exports.updataUserScore = async (req, res, next) => {
   /**
    * coditionName은 유저아이디
    */
-  let conditionName = { userid: req.body.userid };
+  let conditionName = { userid: req.user.userid };
   let m_score = req.body.m_score;
   let s_score = req.body.s_score;
   let score = m_score + s_score;
@@ -207,10 +166,61 @@ exports.readMinor = async (req, res, next) => {
   }
 };
 
-exports.readUserCourse = async(req, res, next) => {
-  /**
-   * 유저가 들은 수강학기
-   * 
-   */
+exports.takeSemester=(req,res,next)=>{
+  res.json(req.user.semester);
+}
 
+
+exports.getUserMinor = async(req, res, next) => {
+  return res.status(200).json(req.user.s_list);
 };
+
+exports.getUserMajor = async(req, res, next) => {
+  return res.status(200).json(req.user.m_list);
+};
+
+exports.updateUserMinor = async(req, res, next) => {
+  let updateMinorList1 = req.body.list1; // {"기초교양" : 이렇게 받고}
+  let updateMinorList2 = req.body.list2; // {"교양필수" : 이렇게 받고}
+  let conditionName = { userid : req.user.userid };
+  try {
+    const user = await readDB("userData", "users", conditionName, false);
+    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
+    // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
+    updateMinorList1.forEach((value) => {
+      if (!data.s_list.기초교양.includes(value)) {
+        updateDB("userData", "users", conditionName, { s_list : {"기초교양" : value} });
+      }
+    });
+    // 이건 교양필수에 관련
+    updateMinorList2.forEach((value) => {
+      if (!data.s_list.교양필수.includes(value)) {
+        updateDB("userData", "users", conditionName, { s_list : {"교양필수" : value} });
+      }
+    });
+    const check = checkScore("s_core", user.s_score);
+    await updateDB("userData", "users", conditionName, { s_list : check });
+  } catch(err) {
+      throw new Error(err);
+  }
+}
+
+exports.updateUserMajor = async(req, res, next) => {
+  let updateMajorList = req.body.list; // 배열로 받음
+  let conditionName = { userid : req.user.userid };
+  try {
+    const user = await readDB("userData", "users", conditionName, false);
+    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
+    // 졸업요건 배열이랑 클라이언트에서 받은 전공필수 배열이랑 비교해서 없으면 유저리스트에 추가
+    updateMajorList.forEach((value) => {
+      if (!data.m_list.includes(value)) {
+        updateDB("userData", "users", conditionName, { m_list : value });
+      }
+    });
+
+    const check = checkScore("m_need_score", user.m_need_score);
+    await updateDB("userData", "users", conditionName, { m_check : check });
+  } catch(err) {
+      throw new Error(err);
+  }
+}

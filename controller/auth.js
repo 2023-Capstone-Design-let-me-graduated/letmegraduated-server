@@ -1,4 +1,4 @@
-// controllers
+// auth
 exports.isLoggedIn = (req, res, next) => {
   try{
   if (req.isAuthenticated()) {
@@ -34,10 +34,12 @@ exports.createUser = async (req, res, next) => {
    * m_score : 전공학점 [int]
    * m_list : 전공필수 리스트 [array]
    * m_need_score : 전공필수학점 [int]
+   * m_check : 전공 졸업 요건 충족
    * s_score : 교양학점 [int]
    * s_list : 교양 리스트 {기초교양:[],교양필수:[]}
+   * s_check : 교양 졸업 요건 충족
    * eng : 영어 졸업 인증 [bool]
-   * check : 신청여부 [bool]
+   * engcheck : 신청여부 [bool]
    * certificate : 졸업 자격 기준 [bool]
    */
   const bcrypt = require("bcrypt");
@@ -53,10 +55,12 @@ exports.createUser = async (req, res, next) => {
       m_score: 0,
       m_list: [],
       m_need_score : 0,
+      m_check: false,
       s_score: 0,
       s_list: {sNeedList:[],sFoundamentalList:[]},
+      s_check: false,
       eng: false,
-      check: false,
+      engcheck: false,
       certificate: false,
     };
     const invalidcheck = await readDB(
