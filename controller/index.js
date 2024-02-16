@@ -1,7 +1,7 @@
 // controller
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
 
-// /main/:userid GET
+// /main GET
 // 한명의 유저 데이터 내용을 가져옴
 exports.readUserPull = async (req, res, next) => {
   /**
@@ -10,7 +10,7 @@ exports.readUserPull = async (req, res, next) => {
    * conditionName은 { userid : "이름" } 형식으로 받음
    */
 
-  let conditionName = { userid: req.body.userid };
+  let conditionName = { userid: req.user.userid };
 
   try {
     let user = await readDB("userData", "users", conditionName, false);
@@ -24,7 +24,7 @@ exports.readUserPull = async (req, res, next) => {
   }
 };
 
-// /main:userid PUT
+// /main PUT
 // 유저의 영어인증요건(eng)를 true로 업데이트
 exports.updataUserExam = async (req, res, next) => {
   /**
@@ -51,25 +51,22 @@ exports.updataUserExam = async (req, res, next) => {
   }
 };
 
-// /main/:userid/semester GET
-// timetable에 있는 전체 시간표를 클라이언트에 보냄
+// /main/semester GET
+// 
 exports.readAllSemester = async (req, res, next) => {
   /**
    * dbName은 timeTabel
    * collectionName은 2019_1 ~ 2023_2
    */
 
-  let collectionName = req.body.collectionName;
-
   try {
-    let allsemester = await readDB("timeTable", collectionName);
-    return res.status(200).json(allsemester);
+    return res.status(200).json(req.user.semester);
   } catch (err) {
-    throw new Error(err);
+    next(err);
   }
 };
 
-// /main/:userid/score PUT
+// /main/score PUT
 // 전체 학점, 전공 학점, 교양 학점을 업데이트 함
 exports.updataUserScore = async (req, res, next) => {
   /**
@@ -95,6 +92,7 @@ exports.updataUserScore = async (req, res, next) => {
         score: user.score + score,
       });
     }
+    next();
   } catch (err) {
     throw new Error(err);
   }
@@ -124,6 +122,7 @@ exports.updataUserList = async (req, res, next) => {
             updateDB("userData", "users", conditionName, { s_list: value });
           }
         });
+        next();
       } else {
         throw new Error("올바르지 않은 리스트");
       }

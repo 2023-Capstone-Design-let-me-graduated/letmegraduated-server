@@ -6,22 +6,22 @@ const { readUserPull, updataUserExam, readAllSemester,
 const { isNotLoggedIn, isLoggedIn } = require("../controller/auth");
 
 // 유저 데이터를 클라이언트에 보냄
-router.get('/main/:userid', isLoggedIn, readUserPull);
+router.get('/main', isLoggedIn, readUserPull);
 
 // 유저의 영어 졸업 인증 요건을 업데이트
-router.put('/main/:userid', isLoggedIn, updataUserExam);
+router.put('/main', isLoggedIn, updataUserExam);
 
 // timetable에 있는 전체 시간표를 클라이언트에 보냄
-router.get('/main/:userid/semester', isLoggedIn, readAllSemester);
+router.get('/main/semester', isLoggedIn, readAllSemester);
 
 // 유저의 전체학점, 전공학점, 교양학점을 업데이트
-router.put('/main/:userid/score', isLoggedIn, updataUserScore);
+router.put('/major', isLoggedIn, updataUserScore, updataUserList);
 
 // 유저의 전공 필수 리스트, 교양 필수 리스트 업데이트
-router.put('/main/:userid/list', isLoggedIn, updataUserList);
+router.put('/main/list', isLoggedIn, updataUserList);
 
 // 유저가 영어 졸업인증 신청을 했는 확인 업데이트
-router.put('/main/:userid/check', isLoggedIn, userEngCheck);
+router.put('/main/check', isLoggedIn, userEngCheck);
 
 // major
 // timetable에서 전공필수, 전공선택만 가져옴
