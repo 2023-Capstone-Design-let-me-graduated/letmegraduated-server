@@ -1,9 +1,13 @@
 // controllers
 exports.isLoggedIn = (req, res, next) => {
+  try{
   if (req.isAuthenticated()) {
     next();
   } else {
-    res.status(403).send("로그인 필요");
+    throw new Error("(로그인이 필요한 서비스)");
+  }}
+  catch(err){
+    next(err);
   }
 };
 
@@ -12,8 +16,7 @@ exports.isNotLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
       next();
     } else {
-      const message = encodeURIComponent("로그인한 상태입니다.");
-      throw new Error("이미 로그인한 상태입니다.");
+      throw new Error("(이미 로그인한 상태)");
     }
   } catch (err) {
     next(err);
@@ -30,8 +33,9 @@ exports.createUser = async (req, res, next) => {
    * score : 현재 취득학점 [int]
    * m_score : 전공학점 [int]
    * m_list : 전공필수 리스트 [array]
+   * m_need_score : 전공필수학점 [int]
    * s_score : 교양학점 [int]
-   * s_list : 교양필수 리스트 [array]
+   * s_list : 교양 리스트 {기초교양:[],교양필수:[]}
    * eng : 영어 졸업 인증 [bool]
    * check : 신청여부 [bool]
    * certificate : 졸업 자격 기준 [bool]
@@ -48,8 +52,9 @@ exports.createUser = async (req, res, next) => {
       score: 0,
       m_score: 0,
       m_list: [],
+      m_need_score : 0,
       s_score: 0,
-      s_list: [],
+      s_list: {sNeedList:[],sFoundamentalList:[]},
       eng: false,
       check: false,
       certificate: false,

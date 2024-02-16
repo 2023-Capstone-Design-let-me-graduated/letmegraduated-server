@@ -1,5 +1,5 @@
 // controller
-const { readDB, updateDB, deleteDB } = require('./db');
+const { readDB, updateDB } = require('./db');
 
 // /exam/userid GET
 // 주간, 야간 영어 시험 종류를 가져옴
@@ -10,7 +10,7 @@ exports.examPull = async(req, res, next) => {
      * conditionName conditionName은 컴퓨터공학, 컴퓨터공학(야)형식으로 받음
      */
 
-    let conditionName = req.body.major;
+    let conditionName = user.major;
     try {
         if (conditionName === "컴퓨터공학") {
             const exam = await readDB("criteria", "exam", { type : "주간" });
@@ -39,11 +39,9 @@ exports.userPullCheck = async(req, res, next) => {
      * m_list[] 전공필수 7개이상
      */
     
-    let conditionName = { userid : req.body.userid };
-
     try {
-        let user = await readDB("userData", "users", conditionName, false);
-        const s_list = user.s_list.length; // 교양필수 배열 개수를 가져옴
+        const s_list = req.user.s_list.length; // 교양필수 배열 개수를 가져옴
+        // 교양 필수의 경우 카테고리를 기준으로 해야 됨
         const m_list = user.m_list.length; // 전공필수 배열 개수를 가져옴
         if (!user) {
             return res.status(404).json({ message : '유저를 찾을 수 없음' });
