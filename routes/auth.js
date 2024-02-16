@@ -12,11 +12,11 @@ router.post("/signup/email", isNotLoggedIn, emailForSignUp, (req, res) =>
 );
 
 // /signup
-// createUser
+// req.body의 데이터를 활용하여 회원 가입
 router.post("/signup", isNotLoggedIn, createUser);
 
 // /login
-// query: userid랑 passward받아서 상태코드 보내기, 혹은 쿠키가 존재하면 자동 로그인
+// req.body.id와 req.body.password를 활용하여 로그인
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", function (err, user) {
     if (err) {
@@ -27,13 +27,13 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
     }
     // 여기 값 바꾸면 api 검사 가능
     return req.login(user, () => {
-      res.sendFile(__dirname + "/main.html");
+      res.status(200).send("로그인 성공");
     });
   })(req, res, next);
 });
 
 // logout
-router.post("/logout", isLoggedIn, (req, res, next) =>
+router.get("/logout", isLoggedIn, (req, res, next) =>
   req.logout(function (err) {
     if (err) {
       return next(err);
@@ -41,20 +41,16 @@ router.post("/logout", isLoggedIn, (req, res, next) =>
   })
 );
 
-//테스트 용
-router.get("/login", (req, res, next) => {
-  return res.sendFile(__dirname + "/login.html");
-});
+// //테스트 용
+// router.get("/login", (req, res, next) => {
+//   return res.sendFile(__dirname + "/login.html");
+// });
 
-// /setting/:userid
+// /user
 // emailForWithdrawal 후에 userid 삭제
-router.delete(
-  "/setting/:userid",
-  isLoggedIn,
-  emailForWithdrawal,
-  (req, res) => {
-    deleteDB("userData", "users", { username: req.params.userid });
-  }
-);
+router.delete("/user", isLoggedIn, emailForWithdrawal, (req, res) => {
+  deleteDB("userData", "users", { userid: req.user.userid });
+  res.status(200).send("탈퇴 성공");
+});
 
 module.exports = router;

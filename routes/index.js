@@ -3,31 +3,33 @@ const router = express.Router();
 const { readUserPull, updataUserExam, readAllSemester, 
         updataUserScore, updataUserList, userEngCheck,readMinor,
         readMajor } = require('../controller/index');
-const { isNotLoggedIn, isLoggedIn } = require("../controller/auth");
+const {isLoggedIn } = require("../controller/auth");
 
-// 유저 데이터를 클라이언트에 보냄
+//main
+// 유저 데이터 중 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건을 가져옴.
 router.get('/main', isLoggedIn, readUserPull);
 
-// 유저의 영어 졸업 인증 요건을 업데이트
+// 영어 졸업인증 요건 true/false로 업데이트
 router.put('/main', isLoggedIn, updataUserExam);
 
-// timetable에 있는 전체 시간표를 클라이언트에 보냄
-router.get('/main/semester', isLoggedIn, readAllSemester);
-
-// 유저의 전체학점, 전공학점, 교양학점을 업데이트
-router.put('/major', isLoggedIn, updataUserScore, updataUserList);
-
-// 유저의 전공 필수 리스트, 교양 필수 리스트 업데이트
-router.put('/main/list', isLoggedIn, updataUserList);
-
-// 유저가 영어 졸업인증 신청을 했는 확인 업데이트
-router.put('/main/check', isLoggedIn, userEngCheck);
-
 // major
-// timetable에서 전공필수, 전공선택만 가져옴
+// 유저가 들은 수강학기
 router.get('/major/semester', isLoggedIn, readMajor);
 
-// timetable에서 교양필수을 가져옴
-router.get('/minor/semester', isLoggedIn, readMinor);
+// 선택된 수강학기의 모든 전공 과목 리스트를 꺼내온다.
+router.post('/major/semester', isLoggedIn, readMajor);
+
+// 유저데이터 변경하고 미수강한 전필 과목, 남은 전공 학점 출력
+router.put('/major',isLoggedIn,);
+
+//minor
+// 유저가 들은 수강학기
+router.get('/minor/semester', isLoggedIn, readMajor);
+
+// 선택된 수강학기의 모든 교양 과목 리스트를 꺼내온다.
+router.post('/minor/semester', isLoggedIn, readMinor);
+
+// 기초교양, 교양필수리스트, 교양 학점, 총학점 업데이트
+router.put('/minor', isLoggedIn, readMajor);
 
 module.exports = router;
