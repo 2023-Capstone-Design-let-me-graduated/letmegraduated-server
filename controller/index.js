@@ -59,14 +59,14 @@ exports.readMinor = async (req, res, next) => {
 
 exports.takeSemester = (req, res, next) => {
   res.json(req.user.semester);
-};
+}
 
-exports.updateUserMinor = async (req, res, next) => {
-  let updateMinorList1 = req.body.list1; // {"기초교양" : 이렇게 받고}
-  let updateMinorList2 = req.body.list2; // {"교양필수" : 이렇게 받고}
-  let conditionName = { userid: req.user.userid };
+exports.updateUserMinor = async(req, res, next) => {
+  let updateMinorList1 = req.body.needList; // {"기초교양" : 이렇게 받고}
+  let updateMinorList2 = req.body.sNeedList; // {"교양필수" : 이렇게 받고}
+  let conditionName = { userid : req.user.userid };
   try {
-    const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
+    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
     // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
     updateMinorList1.forEach((value) => {
       if (!data.s_list.기초교양.includes(value.sub_name)) {
@@ -84,10 +84,9 @@ exports.updateUserMinor = async (req, res, next) => {
       }
     });
     const check = checkScore("s_core", user.s_score);
-    // 카테고리 개수 판별
-    await updateDB("userData", "users", conditionName, { s_check: check });
-  } catch (err) {
-    throw new Error(err);
+    await updateDB("userData", "users", conditionName, { s_check : check });
+  } catch(err) {
+      throw new Error(err);
   }
 };
 
@@ -100,7 +99,7 @@ exports.updateUserMajor = async (req, res, next) => {
     // 졸업요건 배열이랑 클라이언트에서 받은 전공필수 배열이랑 비교해서 없으면 유저리스트에 추가
     updateMajorList.forEach((value) => {
       if (!data.m_list.includes(value)) {
-        updateDB("userData", "users", conditionName, { m_list: value });
+        updateDB("userData", "users", conditionName, { c_check : value });
       }
     });
 
