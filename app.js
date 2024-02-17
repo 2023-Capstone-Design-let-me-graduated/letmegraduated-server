@@ -37,12 +37,12 @@ app.use(
 );
 
 //테스트 html
-app.get("", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
-});
-app.get("/login.html", (req, res) => {
-  res.sendFile(__dirname + "/login.html");
-});
+// app.get("", (req, res) => {
+//   res.sendFile(__dirname + "/index.html");
+// });
+// app.get("/login.html", (req, res) => {
+//   res.sendFile(__dirname + "/login.html");
+// });
 passportConfig();
 
 app.use(passport.initialize());
