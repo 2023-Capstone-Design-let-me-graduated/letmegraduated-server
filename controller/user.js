@@ -19,7 +19,6 @@ exports.checkEng = async (req, res, next) => {
         },
         false
       );
-      return res.status(200).json(exam);
     } else {
       exam = await readDB(
         "criteria",
@@ -42,14 +41,14 @@ exports.checkEng = async (req, res, next) => {
       if (+exam.condition[0] > +score) {
         check = true;
       }
-      // 업데이트
-      return updateDB(
-        "userData",
-        "users",
-        { userid: req.user.userid },
-        { eng: check }
-      );
     }
+    // 업데이트
+    return updateDB(
+      "userData",
+      "users",
+      { userid: req.user.userid },
+      { eng: check }
+    );
   } catch (err) {
     throw new Error(err);
   }

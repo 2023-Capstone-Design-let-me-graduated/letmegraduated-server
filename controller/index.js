@@ -81,25 +81,6 @@ exports.updataUserList = async (req, res, next) => {
   }
 };
 
-// /main/:userid/engcheck PUT
-// 유저가 영어 졸업인증 신청을 했는 확인
-exports.userEngCheck = async (req, res, next) => {
-  let conditionName = { userid: req.body.userid };
-  let swap_t_f = req.body.swap_t_f; // 입력 받은 값이 true인지 false인지 판별
-
-  try {
-    let user = await readDB("userData", "users", conditionName, false);
-    let Change = { check: swap_t_f };
-    if (!user) {
-      return res.status(404).json({ message: "유저를 찾을 수 없음" });
-    } else {
-      await updateDB("userData", "users", conditionName, Change);
-    }
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
 // /major/semester GET
 // timetable에서 전공필수, 전공선택을 가져옴 (해당 유저의 데이터만 가져와야한다.)
 exports.readMajor = async (req, res, next) => {
@@ -174,22 +155,22 @@ exports.updateUserMinor = async(req, res, next) => {
   let updateMinorList2 = req.body.list2; // {"교양필수" : 이렇게 받고}
   let conditionName = { userid : req.user.userid };
   try {
-    const user = await readDB("userData", "users", conditionName, false);
     const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
     // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
     updateMinorList1.forEach((value) => {
-      if (!data.s_list.기초교양.includes(value)) {
-        updateDB("userData", "users", conditionName, { s_list : {"기초교양" : value} });
+      if (!data.s_list.기초교양.includes(value.sub_name)) {
+        updateDB("userData", "users", conditionName, { s_list : {"기초교양" : value.sub_name} }); //쿼리 다시 짜야됨 리스트에 추가하는 식으로
       }
     });
     // 이건 교양필수에 관련
     updateMinorList2.forEach((value) => {
-      if (!data.s_list.교양필수.includes(value)) {
-        updateDB("userData", "users", conditionName, { s_list : {"교양필수" : value} });
+      if (!data.s_list.교양필수.includes(value.sub_name)) {
+        updateDB("userData", "users", conditionName, { s_list : {"교양필수" : value.sub_name} });  //쿼리 다시 짜야됨 리스트에 추가하는 식으로
       }
     });
     const check = checkScore("s_core", user.s_score);
-    await updateDB("userData", "users", conditionName, { s_list : check });
+    // 카테고리 개수 판별
+    await updateDB("userData", "users", conditionName, { s_check : check });
   } catch(err) {
       throw new Error(err);
   }
