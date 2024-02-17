@@ -5,6 +5,7 @@ const {
   readMinor,
   readMajor,
   takeSemester,
+  updateUserMinor,
 } = require("../controller/index");
 const { isLoggedIn } = require("../controller/auth");
 
@@ -33,6 +34,6 @@ router.get("/minor/semester", isLoggedIn, takeSemester);
 router.post("/minor/semester", isLoggedIn, readMinor);
 
 // 기초교양, 교양필수리스트, 교양 학점, 총학점 업데이트
-router.put("/minor", isLoggedIn);
+router.put("/minor", isLoggedIn, updateUserMinor);
 
 module.exports = router;

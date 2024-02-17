@@ -266,22 +266,31 @@ const updateUserMinor = async (req, res, next) => {
     { sub_name: "대학영어회화1", credit: 3 },
     { sub_name: "대학영어회화2", credit: 2 },
   ]; // {"기초교양" : 이렇게 받고}
-  let updateMinorList2 = ["INU핵심글로벌"]; // {"교양필수" : 이렇게 받고}
+  let updateMinorList2 = [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // 데이터 받는 코드
 
-  let sFoundamentalList = [];
-  // 기초 교양리스트
-
+  let sFoundamentalList = []; // 기초 교양리스트
+  let sNeedList = []; // 교양필수 리스트
+  
   let conditionName = { userid: "testuser1" };
   // condition
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
+    
+    let allFoundamentalList = data.s_list["기초교양"]; // 졸업요건 기초교양
+    let allNeedList = data.s_list["교양필수"]; // 졸업요건 교양필수
+
+    let allFoundamentalListN = data.s_list["기초교양"]; // 졸업요건 기초교양
+    let allNeedListN = data.s_list["교양필수"]; // 졸업요건 교양필수
     let s_score = 0;
+
     for (let list of updateMinorList1) {
       if (!sFoundamentalList.includes(list.sub_name)) {
         sFoundamentalList.push(list.sub_name);
+        allFoundamentalList.splice(allFoundamentalList.indexOf(list.sub_name), 1);
+        s_score += list.credit;
       }
-      s_score += list.credit;
+
     }
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
@@ -290,60 +299,107 @@ const updateUserMinor = async (req, res, next) => {
     // }
     // 필수 관련
     // 데이터 받아서 > c_area에 중복 안되게 넣고 s_score에 값 추가
+    for (let list of updateMinorList2) {
+        if(!sNeedList.includes(list.c_area)) {
+            sNeedList.push(list.c_area);
+            allNeedList.splice(allNeedList.indexOf(list.c_area), 1);
+           s_core += list.credit;
+        }
+    }
+    await updateDB("userData", "users", conditionName, {
+        "s_list.sNeedList": sNeedList,
+      });
 
-    const check = checkScore("s_core", user.s_score);
-    // if check이 true고 sFoundamentalList가 6의 length, sNeedList가 3의 length이면 밑에꺼
-    await updateDB("userData", "users", conditionName, { s_check: check });
+    const check = checkScore("s_core", s_score);
+      // 졸업 요건 
+    if (check && (sFoundamentalList.length === 6 && sNeedList.length === 3)) {
+        await updateDB("userData", "users", conditionName, { s_check: true });
+
+        const report = {};
+        report["state"] = true;
+        report["checkState"] = true; // 학점을 다 들었는가?
+        report["sFoundamentalList"] = true; // 기초교양 다 들었는지
+        report["sNeedList"] = true; // 교양 필수 다들었는지
+        report["s_score"] = s_score; // 현재 교양학점 학점
+        report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+        report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
+        res.json(report);
+    } else {
+        await updateDB("userData", "users", conditionName, { s_check: false });
+
+        const reprot = {};
+        report["state"] = false;
+        report["checkState"] = false; // 학점을 다 들었는가?
+        report["sFoundamentalList"] = false; // 기초교양 다 들었는지
+        report["sNeedList"] = false; // 교양 필수 다들었는지
+        report["s_score"] = s_score; // 현재 교양학점 학점
+        report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+        report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
+        // 유저기초교양과 졸업요건의 기초교양을 비교
+        if (allFoundamentalListN === sFoundamentalList) {
+            report["sFoundamentalList"] = true; // 기초교양 다 들었는지
+        }
+        // 유저교양필수와 졸업요건의 교양필수를 비교
+        if (allNeedListN === sNeedList) {
+            report["sNeedList"] = true;
+        }
+        if (check) {
+            report["checkState"] = true;
+        }
+        res.json(report);
+    }
+    
   } catch (err) {
     throw new Error(err);
   }
 };
 updateUserMinor();
 
-const createUser = async (req, res, next) => {
-  /**
-   * 사용자가 필요한 데이터들
-   * userid : 유저이름 [string]
-   * password : 패스워드 []
-   * major : 전공 (컴퓨터공학, 컴퓨터공학(야)) [string]
-   * semester : 학기 [array]
-   * score : 현재 취득학점 [int]
-   * m_score : 전공학점 [int]
-   * m_list : 전공필수 리스트 [array]
-   * m_need_score : 전공필수학점 [int]
-   * m_check : 전공 졸업 요건 충족
-   * s_score : 교양학점 [int]
-   * s_list : 교양 리스트 {기초교양:[],교양필수:[]}
-   * s_check : 교양 졸업 요건 충족
-   * eng : 영어 졸업 인증 [bool]
-   * engcheck : 신청여부 [bool]
-   * certificate : 졸업 자격 기준 [bool]
-   */
 
-  const { createDB, readDB } = require("./controller/db");
-  try {
-    const newUser = {
-      userid: "testuser1",
-      major: "testuser1",
-      email: "testuser1",
-      semester: "testuser1",
-      score: 0,
-      m_score: 0,
-      m_list: [],
-      m_need_score: 0,
-      m_check: false,
-      s_score: 0,
-      s_list: { sNeedList: [], sFoundamentalList: [] },
-      s_check: false,
-      eng: false,
-      engcheck: false,
-      certificate: false,
-    };
-    await createDB(newUser);
-  } catch (err) {
-    next(err);
-  }
-};
+// const createUser = async (req, res, next) => {
+//   /**
+//    * 사용자가 필요한 데이터들
+//    * userid : 유저이름 [string]
+//    * password : 패스워드 []
+//    * major : 전공 (컴퓨터공학, 컴퓨터공학(야)) [string]
+//    * semester : 학기 [array]
+//    * score : 현재 취득학점 [int]
+//    * m_score : 전공학점 [int]
+//    * m_list : 전공필수 리스트 [array]
+//    * m_need_score : 전공필수학점 [int]
+//    * m_check : 전공 졸업 요건 충족
+//    * s_score : 교양학점 [int]
+//    * s_list : 교양 리스트 {기초교양:[],교양필수:[]}
+//    * s_check : 교양 졸업 요건 충족
+//    * eng : 영어 졸업 인증 [bool]
+//    * engcheck : 신청여부 [bool]
+//    * certificate : 졸업 자격 기준 [bool]
+//    */
+
+//   const { createDB, readDB } = require("./controller/db");
+//   try {
+//     const newUser = {
+//       userid: "testuser1",
+//       major: "testuser1",
+//       email: "testuser1",
+//       semester: "testuser1",
+//       score: 0,
+//       m_score: 0,
+//       m_list: [],
+//       m_need_score: 0,
+//       m_check: false,
+//       s_score: 0,
+//       s_list: { sNeedList: [], sFoundamentalList: [] },
+//       s_check: false,
+//       eng: false,
+//       engcheck: false,
+//       certificate: false,
+//     };
+//     await createDB(newUser);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 // const readMinor = async (req, res, next) => {
 //     /**

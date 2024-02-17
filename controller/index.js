@@ -61,32 +61,93 @@ exports.takeSemester = (req, res, next) => {
   res.json(req.user.semester);
 }
 
-exports.updateUserMinor = async(req, res, next) => {
-  let updateMinorList1 = req.body.needList; // {"기초교양" : 이렇게 받고}
-  let updateMinorList2 = req.body.sNeedList; // {"교양필수" : 이렇게 받고}
-  let conditionName = { userid : req.user.userid };
+exports.updateUserMinor = async (req, res, next) => {
+  let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
+  let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
+  // 데이터 받는 코드
+
+  let sFoundamentalList = []; // 기초 교양리스트
+  let sNeedList = []; // 교양필수 리스트
+  
+  let conditionName = { userid: req.user.userid };
+  // condition
   try {
-    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
-    // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
-    updateMinorList1.forEach((value) => {
-      if (!data.s_list.기초교양.includes(value.sub_name)) {
-        updateDB("userData", "users", conditionName, {
-          s_list: { 기초교양: value.sub_name },
-        }); //쿼리 다시 짜야됨 리스트에 추가하는 식으로
+    const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
+    
+    let allFoundamentalList = data.s_list["기초교양"]; // (수정용)졸업요건 기초교양
+    let allNeedList = data.s_list["교양필수"]; // (수정용)졸업요건 교양필수
+
+    let allFoundamentalListN = data.s_list["기초교양"]; // (확인용)졸업요건 기초교양
+    let allNeedListN = data.s_list["교양필수"]; // (확인용)졸업요건 교양필수
+    let s_score = 0;
+
+    for (let list of updateMinorList1) {
+      if (!sFoundamentalList.includes(list.sub_name)) {
+        sFoundamentalList.push(list.sub_name);
+        allFoundamentalList.splice(allFoundamentalList.indexOf(list.sub_name), 1);
+        s_score += list.credit;
       }
+
+    }
+    await updateDB("userData", "users", conditionName, {
+      "s_list.sFoundamentalList": sFoundamentalList,
     });
-    // 이건 교양필수에 관련
-    updateMinorList2.forEach((value) => {
-      if (!data.s_list.교양필수.includes(value.sub_name)) {
-        updateDB("userData", "users", conditionName, {
-          s_list: { 교양필수: value.sub_name },
-        }); //쿼리 다시 짜야됨 리스트에 추가하는 식으로
-      }
-    });
-    const check = checkScore("s_core", user.s_score);
-    await updateDB("userData", "users", conditionName, { s_check : check });
-  } catch(err) {
-      throw new Error(err);
+
+    // }
+    // 필수 관련
+    // 데이터 받아서 > c_area에 중복 안되게 넣고 s_score에 값 추가
+    for (let list of updateMinorList2) {
+        if(!sNeedList.includes(list.c_area)) {
+            sNeedList.push(list.c_area);
+            allNeedList.splice(allNeedList.indexOf(list.c_area), 1);
+           s_core += list.credit;
+        }
+    }
+    await updateDB("userData", "users", conditionName, {
+        "s_list.sNeedList": sNeedList,
+      });
+
+    const check = checkScore("s_core", s_score);
+      // 졸업 요건 
+    if (check && (sFoundamentalList.length === 6 && sNeedList.length === 3)) {
+        await updateDB("userData", "users", conditionName, { s_check: true });
+
+        const report = {};
+        report["state"] = true;
+        report["checkState"] = true; // 학점을 다 들었는가?
+        report["sFoundamentalList"] = true; // 기초교양 다 들었는지
+        report["sNeedList"] = true; // 교양 필수 다들었는지
+        report["s_score"] = s_score; // 현재 교양학점 학점
+        report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+        report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
+        res.json(report);
+    } else {
+        await updateDB("userData", "users", conditionName, { s_check: false });
+
+        const reprot = {};
+        report["state"] = false;
+        report["checkState"] = false; // 학점을 다 들었는가?
+        report["sFoundamentalList"] = false; // 기초교양 다 들었는지
+        report["sNeedList"] = false; // 교양 필수 다들었는지
+        report["s_score"] = s_score; // 현재 교양학점 학점
+        report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+        report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
+        // 유저기초교양과 졸업요건의 기초교양을 비교
+        if (allFoundamentalListN === sFoundamentalList) {
+            report["sFoundamentalList"] = true; // 기초교양 다 들었는지
+        }
+        // 유저교양필수와 졸업요건의 교양필수를 비교
+        if (allNeedListN === sNeedList) {
+            report["sNeedList"] = true;
+        }
+        if (check) {
+            report["checkState"] = true;
+        }
+        res.json(report);
+    }
+    
+  } catch (err) {
+    throw new Error(err);
   }
 };
 
