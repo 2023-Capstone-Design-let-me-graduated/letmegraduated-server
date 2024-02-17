@@ -18,7 +18,7 @@ const app = express();
 // 포트 이름 세팅
 app.set("port", 3000);
 
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(logger("combined"));
 app.use(express.json());
@@ -31,11 +31,11 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: true,
     },
+    proxy: true,
   })
 );
-
 //테스트 html
 // app.get("", (req, res) => {
 //   res.sendFile(__dirname + "/index.html");
