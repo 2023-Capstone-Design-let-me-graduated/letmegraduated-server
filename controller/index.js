@@ -170,38 +170,57 @@ exports.takeSemester=(req,res,next)=>{
   res.json(req.user.semester);
 }
 
+exports.updateUserMinor = async (req, res, next) => {
+  let updateMinorList1 = req.body.sFoundamentalList; // {"기초교양" : 이렇게 받고}
+  let updateMinorList2 = req.body.sNeedList; // {"교양필수" : 이렇게 받고}
+  // 데이터 받는 코드
 
-exports.getUserMinor = async(req, res, next) => {
-  return res.status(200).json(req.user.s_list);
-};
-
-exports.getUserMajor = async(req, res, next) => {
-  return res.status(200).json(req.user.m_list);
-};
-
-exports.updateUserMinor = async(req, res, next) => {
-  let updateMinorList1 = req.body.list1; // {"기초교양" : 이렇게 받고}
-  let updateMinorList2 = req.body.list2; // {"교양필수" : 이렇게 받고}
-  let conditionName = { userid : req.user.userid };
+  let sFoundamentalList = []; // 기초 교양 리스트
+  let sNeedList = []; // 교양필수 리스트
+  let conditionName = { userid: req.user.userid };
+  // condition
   try {
-    const user = await readDB("userData", "users", conditionName, false);
-    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
-    // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
-    updateMinorList1.forEach((value) => {
-      if (!data.s_list.기초교양.includes(value)) {
-        updateDB("userData", "users", conditionName, { s_list : {"기초교양" : value} });
+    let s_score = 0;
+    for (let list of updateMinorList1) {
+      if (!sFoundamentalList.includes(list.sub_name)) {
+        sFoundamentalList.push(list.sub_name);
       }
-    });
-    // 이건 교양필수에 관련
-    updateMinorList2.forEach((value) => {
-      if (!data.s_list.교양필수.includes(value)) {
-        updateDB("userData", "users", conditionName, { s_list : {"교양필수" : value} });
+
+      // 졸업요건이랑 유저가 수강한 기초교양 이랑 비교해서 부족한 리스트를 담음
+      if (allFoundamentalList.includes(sFoundamentalList)) {
+        UserInsufficientList.push(allFoundamentalList.delet(sFoundamentalList));
       }
+      s_score += list.credit;
+    }
+    await updateDB("userData", "users", conditionName, {
+      "s_list.sFoundamentalList": sFoundamentalList,
     });
-    const check = checkScore("s_core", user.s_score);
-    await updateDB("userData", "users", conditionName, { s_list : check });
-  } catch(err) {
-      throw new Error(err);
+
+    // }
+    // 필수 관련
+    // 데이터 받아서 > c_area에 중복 안되게 넣고 s_score에 값 추가
+    for (let list of updateMinorList2) {
+        if(!sNeedList.includes(list.c_area)) {
+            sNeedList.push(list.c_area);
+        }
+        
+        if (allNeedList.includes(sNeedList)) {
+          UserInsufficientList.push(allNeedList.delet(sNeedList));
+        }
+        s_core += list.credit;
+    }
+    await updateDB("userData", "users", conditionName, {
+        "s_list.sNeedList": sNeedList,
+      });
+
+    const check = checkScore("s_core", s_score);
+
+    if (check && (sFoundamentalList.length === 6 && sNeedList.length === 3)) {
+        await updateDB("userData", "users", conditionName, { s_check: check });
+    }
+    // if check이 true고 sFoundamentalList가 6의 length, sNeedList가 3의 length이면 밑에꺼
+  } catch (err) {
+    throw new Error(err);
   }
 }
 
