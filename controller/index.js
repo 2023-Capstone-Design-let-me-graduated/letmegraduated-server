@@ -2,6 +2,51 @@
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
 const { check } = require("./check");
 
+// /main GET
+// 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건을 꺼내옴
+exports.readTotalData = async (req, res, next) => {
+  try {
+    await updateDB(
+      "userData",
+      "users",
+      { userid: req.user.userid },
+      { score: req.user.m_score + req.user.s_score + req.user.n_score }
+    );
+    const report = {};
+    if (
+      (req.user.m_score + req.user.s_score + req.user.n_score >= 140) &
+      req.user.s_check &
+      req.user.m_check &
+      req.user.engcheck
+    ) {
+      report["state"] = true;
+      await updateDB(
+        "userData",
+        "users",
+        { userid: req.user.userid },
+        { certificate: true }
+      );
+    } else {
+      report["state"] = false;
+      await updateDB(
+        "userData",
+        "users",
+        { userid: req.user.userid },
+        { certificate: false }
+      );
+    }
+    report["score"] = req.user.m_score + req.user.s_score + req.user.n_score;
+    report["m_need_score"] = req.user.m_need_score;
+    report["m_score"] = req.user.m_score;
+    report["s_score"] = req.user.s_score;
+    report["n_score"] = req.user.n_score;
+    report["engcheck"] = req.user.engcheck;
+    res.json(report);
+  } catch (err) {
+    next(err);
+  }
+};
+
 // /main PUT
 // 유저의 영어인증요건(eng)를 true로 업데이트
 exports.updataUserExam = async (req, res, next) => {
@@ -45,9 +90,9 @@ exports.readMinor = async (req, res, next) => {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
     data.forEach((v) => {
-      if (v.c_major=="기초교양"| v.c_area=="기초교양"){
+      if ((v.c_major == "기초교양") | (v.c_area == "기초교양")) {
         minor.foundamental.push(v.sub_name);
-      }else{
+      } else {
         minor.need.push(v.sub_name);
       }
     });
@@ -59,14 +104,14 @@ exports.readMinor = async (req, res, next) => {
 
 exports.takeSemester = (req, res, next) => {
   res.json(req.user.semester);
-}
+};
 
-exports.updateUserMinor = async(req, res, next) => {
+exports.updateUserMinor = async (req, res, next) => {
   let updateMinorList1 = req.body.needList; // {"기초교양" : 이렇게 받고}
   let updateMinorList2 = req.body.sNeedList; // {"교양필수" : 이렇게 받고}
-  let conditionName = { userid : req.user.userid };
+  let conditionName = { userid: req.user.userid };
   try {
-    const data = await readDB("criteria", "score", { name : "졸업요건" }, false);
+    const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
     // 졸업요건 배열이랑 클라이언트에서 받은 기초교양 배열이랑 비교해서 없으면 유저리스트에 추가
     updateMinorList1.forEach((value) => {
       if (!data.s_list.기초교양.includes(value.sub_name)) {
@@ -84,26 +129,22 @@ exports.updateUserMinor = async(req, res, next) => {
       }
     });
     const check = checkScore("s_core", user.s_score);
-    await updateDB("userData", "users", conditionName, { s_check : check });
-  } catch(err) {
-      throw new Error(err);
+    await updateDB("userData", "users", conditionName, { s_check: check });
+  } catch (err) {
+    throw new Error(err);
   }
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  const reqbodyneed = [
-    { sub_name: "캡스톤디자인(1)", credit: 2 },
-    { sub_name: "캡스톤디자인(2)", credit: 2 },
-  ];
-  const reqbodychoice = [];
+  const reqbodyneed = req.body.need;
+  const reqbodychoice = req.body.choice;
   const needList = [];
   const choiceList = [];
   let m_score = 0;
   let m_need_score = 0;
-  let conditionName = { userid: "test" };
+  let conditionName = { userid: req.user.userid };
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
-    // 졸업요건 배열이랑 클라이언트에서 받은 전공필수 배열이랑 비교해서 없으면 유저리스트에 추가
     reqbodyneed.forEach((value) => {
       if (!needList.includes(value.sub_name)) {
         needList.push(value.sub_name);
@@ -126,7 +167,6 @@ exports.updateUserMajor = async (req, res, next) => {
     });
     const m_need_check = checkScore("m_need_score", m_need_score);
     const check = checkScore("m_score", m_score);
-    // 필수리스트가 캡디1 캡디2포함하고 length 7이상이면 통과
     if (
       reqbodyneed.includes("캡스톤디자인 (1)") &
       reqbodyneed.includes("캡스톤디자인 (2)") &
@@ -173,3 +213,7 @@ exports.updateUserMajor = async (req, res, next) => {
     throw new Error(err);
   }
 };
+
+exports.updateUserNormal=async (req,res,next)=>{
+  return await updateDB("userData","users",{userid: req.user.userid},{n_score: req.body.score});
+}

@@ -59,6 +59,7 @@ exports.createUser = async (req, res, next) => {
       s_score: 0,
       s_list: { sNeedList: [], sFoundamentalList: [] },
       s_check: false,
+      n_score: 0,
       eng: false,
       engcheck: false,
       certificate: false,
