@@ -91,20 +91,84 @@ exports.updateUserMinor = async(req, res, next) => {
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  let updateMajorList = req.body.list; // 배열로 받음
-  let conditionName = { userid: req.user.userid };
+  const reqbodyneed = [
+    { sub_name: "캡스톤디자인(1)", credit: 2 },
+    { sub_name: "캡스톤디자인(2)", credit: 2 },
+  ];
+  const reqbodychoice = [];
+  const needList = [];
+  const choiceList = [];
+  let m_score = 0;
+  let m_need_score = 0;
+  let conditionName = { userid: "test" };
   try {
-    const user = await readDB("userData", "users", conditionName, false);
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
     // 졸업요건 배열이랑 클라이언트에서 받은 전공필수 배열이랑 비교해서 없으면 유저리스트에 추가
-    updateMajorList.forEach((value) => {
-      if (!data.m_list.includes(value)) {
-        updateDB("userData", "users", conditionName, { c_check : value });
+    reqbodyneed.forEach((value) => {
+      if (!needList.includes(value.sub_name)) {
+        needList.push(value.sub_name);
+        data.m_list.splice(data.m_list.indexOf(value.sub_name), 1);
+        m_score += value.credit;
+        m_need_score += value.credit;
       }
     });
-
-    const check = checkScore("m_need_score", user.m_need_score);
-    await updateDB("userData", "users", conditionName, { m_check: check });
+    await updateDB("userData", "users", conditionName, {
+      m_need_score: m_need_score,
+    });
+    await updateDB("userData", "users", conditionName, {
+      m_list: needList,
+    });
+    reqbodychoice.forEach((value) => {
+      if (!choiceList.includes(value.sub_name)) {
+        choiceList.push(value.sub_name);
+        m_score += value.credit;
+      }
+    });
+    const m_need_check = checkScore("m_need_score", m_need_score);
+    const check = checkScore("m_score", m_score);
+    // 필수리스트가 캡디1 캡디2포함하고 length 7이상이면 통과
+    if (
+      reqbodyneed.includes("캡스톤디자인 (1)") &
+      reqbodyneed.includes("캡스톤디자인 (2)") &
+      m_need_check &
+      check
+    ) {
+      const report = {};
+      report["state"] = true;
+      report["checkState"] = true; // 학점을 다 들었는가?
+      report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
+      report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
+      report["m_score"] = m_score; // 현재 전공 학점
+      report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
+      report["m_need_list"] = data.m_list; // 남은 필수 과목
+      await updateDB("userData", "users", conditionName, { m_check: true });
+      res.json(report);
+    } else {
+      await updateDB("userData", "users", conditionName, { m_check: false });
+      const report = {};
+      report["state"] = false;
+      report["checkState"] = true; // 학점을 다 들었는가?
+      report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
+      report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
+      report["m_score"] = m_score; // 현재 전공 학점
+      report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
+      report["m_need_list"] = data.m_list; // 남은 필수 과목
+      if (
+        !(
+          reqbodyneed.includes("캡스톤디자인 (1)") &
+          reqbodyneed.includes("캡스톤디자인 (2)")
+        )
+      ) {
+        report["capstoneState"] = false;
+      }
+      if (!m_need_check) {
+        report["m_need_checkState"] = false;
+      }
+      if (!check) {
+        report["checkState"] = false;
+      }
+      res.json(report);
+    }
   } catch (err) {
     throw new Error(err);
   }
