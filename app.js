@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const passport = require("passport");
 //test용
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 dotenv.config();
 
 const express = require("express");
@@ -18,7 +18,7 @@ const app = express();
 // 포트 이름 세팅
 app.set("port", 3000);
 
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(logger("combined"));
 app.use(express.json());
@@ -37,9 +37,9 @@ app.use(
   })
 );
 //테스트 html
-// app.get("", (req, res) => {
-//   res.sendFile(__dirname + "/index.html");
-// });
+app.get("", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 // app.get("/login.html", (req, res) => {
 //   res.sendFile(__dirname + "/login.html");
 // });
