@@ -51,7 +51,7 @@ exports.emailForSignUp = (req, res, next) => {
       <p>이 메일을 요청한 적이 없으시다면 무시해 주세요.</p>
     `,
     };
-    await transporter.json(message);
+    await transporter.sendMail(message);
   }
   main(receiverEmail);
   next();
@@ -114,7 +114,7 @@ exports.emailForWithdrawal = (req, res, next) => {
       <p>이 메일은 letmegraduated app 회원 탈퇴 확인을 위해서 전송되었습니다.</p>
     `,
     };
-    await transporter.json(message);
+    await transporter.sendMail(message);
   }
   main(receiverEmail); //parameter로 receiverEmail 받아야 함.
   next();

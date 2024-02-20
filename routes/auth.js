@@ -23,11 +23,11 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
       return next(err);
     }
     if (!user) {
-      return res.status(404).send("로그인 오류");
+      return res.status(404).json({message: "로그인 오류"});
     }
     // 여기 값 바꾸면 api 검사 가능
     return req.login(user, () => {
-      res.status(200).send("로그인 성공");
+      res.status(200).json({message: "로그인 성공"});
     });
   })(req, res, next);
 });
@@ -50,7 +50,7 @@ router.get("/logout", isLoggedIn, (req, res, next) =>
 // emailForWithdrawal 후에 userid 삭제
 router.delete("/user", isLoggedIn, emailForWithdrawal, (req, res) => {
   deleteDB("userData", "users", { userid: req.user.userid });
-  res.status(200).send("탈퇴 성공");
+  res.status(200).json({message: "탈퇴 성공"});
 });
 
 module.exports = router;

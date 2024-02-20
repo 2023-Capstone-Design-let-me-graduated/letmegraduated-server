@@ -258,8 +258,8 @@ const { MongoClient } = require("mongodb");
 //     }
 //     };
 
-const { createDB, updateDB, deleteDB, readDB } = require("./controller/db");
-const { checkScore } = require("./controller/check");
+const { createDB, updateDB, deleteDB, readDB } = require("../controller/db");
+const { checkScore } = require("../controller/check");
 
 const updateUserMinor = async (req, res, next) => {
   let updateMinorList1 = [
