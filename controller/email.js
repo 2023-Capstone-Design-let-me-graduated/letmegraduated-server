@@ -13,6 +13,12 @@ exports.emailForSignUp = (req, res, next) => {
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();
   req.secret = secretCode;
+  const {
+    OAUTH_CLIENT_ID,
+    OAUTH_CLIENT_SECRET,
+    OAUTH_REFRESH_TOKEN,
+    OAUTH_USER,
+  } = process.env;
   async function main(receiverEmail) {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -45,7 +51,7 @@ exports.emailForSignUp = (req, res, next) => {
       <p>이 메일을 요청한 적이 없으시다면 무시해 주세요.</p>
     `,
     };
-    await transporter.json(message);
+    await transporter.sendMail(message);
   }
   main(receiverEmail);
   next();
@@ -62,6 +68,13 @@ exports.emailForWithdrawal = (req, res, next) => {
   const userId = req.params.userId;
   const nodemailer = require("nodemailer");
   const db = require("./db");
+
+  const {
+    OAUTH_CLIENT_ID,
+    OAUTH_CLIENT_SECRET,
+    OAUTH_REFRESH_TOKEN,
+    OAUTH_USER,
+  } = process.env;
 
   const receiverEmail = db.readDB(
     "userData",
@@ -102,7 +115,7 @@ exports.emailForWithdrawal = (req, res, next) => {
       <p>이 메일은 letmegraduated app 회원 탈퇴 확인을 위해서 전송되었습니다.</p>
     `,
     };
-    await transporter.json(message);
+    await transporter.sendMail(message);
   }
   main(receiverEmail); //parameter로 receiverEmail 받아야 함.
   next();
