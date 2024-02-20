@@ -8,7 +8,7 @@ var passport = require("passport");
 // /signup
 // emailForSignUp으로 res.send(해줘야함.)
 router.post("/signup/email", isNotLoggedIn, emailForSignUp, (req, res) =>
-  res.json(req.secret)
+  res.json({"secret":req.secret})
 );
 
 // /signup
@@ -50,7 +50,7 @@ router.get("/logout", isLoggedIn, (req, res, next) =>
 // emailForWithdrawal 후에 userid 삭제
 router.delete("/user", isLoggedIn, emailForWithdrawal, (req, res) => {
   deleteDB("userData", "users", { userid: req.user.userid });
-  res.status(200).send("탈퇴 성공");
+  res.status(200).json("탈퇴 성공");
 });
 
 module.exports = router;
