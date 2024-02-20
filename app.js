@@ -23,12 +23,12 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(logger("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(cookieParser(COOKIE_SECRET));
 app.use(
   session({
     resave: false,
     saveUninitialized: false,
-    secret: process.env.COOKIE_SECRET,
+    secret: COOKIE_SECRET,
     cookie: {
       httpOnly: true,
       secure: true,
