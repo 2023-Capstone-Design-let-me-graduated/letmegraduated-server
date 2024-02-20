@@ -16,11 +16,11 @@ const passportConfig = require("./passport/index");
 const app = express();
 
 // 포트 이름 세팅
-app.set("port", process.env.PORT || 3000);
+app.set("port", 3000);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: true, credentials: true }));
-app.use(logger("dev"));
+app.use(logger("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -31,15 +31,15 @@ app.use(
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: true,
     },
+    proxy: true,
   })
 );
-
 //테스트 html
-// app.get("", (req, res) => {
-//   res.sendFile(__dirname + "/index.html");
-// });
+app.get("", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 // app.get("/login.html", (req, res) => {
 //   res.sendFile(__dirname + "/login.html");
 // });

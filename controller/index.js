@@ -14,9 +14,9 @@ exports.readTotalData = async (req, res, next) => {
     );
     const report = {};
     if (
-      (req.user.m_score + req.user.s_score + req.user.n_score >= 140) &
-      req.user.s_check &
-      req.user.m_check &
+      (req.user.m_score + req.user.s_score + req.user.n_score >= 140) &&
+      req.user.s_check &&
+      req.user.m_check &&
       req.user.engcheck
     ) {
       report["state"] = true;
@@ -90,7 +90,7 @@ exports.readMinor = async (req, res, next) => {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
     data.forEach((v) => {
-      if ((v.c_major == "기초교양") | (v.c_area == "기초교양")) {
+      if ((v.c_major == "기초교양") || (v.c_area == "기초교양")) {
         minor.foundamental.push(v.sub_name);
       } else {
         minor.need.push(v.sub_name);
@@ -229,9 +229,9 @@ exports.updateUserMajor = async (req, res, next) => {
     const m_need_check = checkScore("m_need_score", m_need_score);
     const check = checkScore("m_score", m_score);
     if (
-      reqbodyneed.includes("캡스톤디자인 (1)") &
-      reqbodyneed.includes("캡스톤디자인 (2)") &
-      m_need_check &
+      reqbodyneed.includes("캡스톤디자인 (1)") &&
+      reqbodyneed.includes("캡스톤디자인 (2)") &&
+      m_need_check &&
       check
     ) {
       const report = {};
@@ -256,7 +256,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["m_need_list"] = data.m_list; // 남은 필수 과목
       if (
         !(
-          reqbodyneed.includes("캡스톤디자인 (1)") &
+          reqbodyneed.includes("캡스톤디자인 (1)") &&
           reqbodyneed.includes("캡스톤디자인 (2)")
         )
       ) {
