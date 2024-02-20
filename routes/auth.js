@@ -8,7 +8,7 @@ var passport = require("passport");
 // /signup
 // emailForSignUp으로 res.send(해줘야함.)
 router.post("/signup/email", isNotLoggedIn, emailForSignUp, (req, res) =>
-  res.send(req.secret)
+  res.json(req.secret)
 );
 
 // /signup
