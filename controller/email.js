@@ -13,12 +13,6 @@ exports.emailForSignUp = (req, res, next) => {
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();
   req.secret = secretCode;
-  const {
-    OAUTH_USER,
-    OAUTH_CLIENT_ID,
-    OAUTH_CLIENT_SECRET,
-    OAUTH_REFRESH_TOKEN,
-  } = process.env;
   async function main(receiverEmail) {
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -68,12 +62,6 @@ exports.emailForWithdrawal = (req, res, next) => {
   const userId = req.params.userId;
   const nodemailer = require("nodemailer");
   const db = require("./db");
-  const {
-    OAUTH_USER,
-    OAUTH_CLIENT_ID,
-    OAUTH_CLIENT_SECRET,
-    OAUTH_REFRESH_TOKEN,
-  } = process.env;
 
   const receiverEmail = db.readDB(
     "userData",
