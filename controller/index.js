@@ -75,7 +75,7 @@ exports.readMajor = async (req, res, next) => {
         major.choice.push(v);
       }
     });
-    return res.status(200).json(major);
+    return res.json(major);
   } catch (err) {
     throw new Error(err);
   }
@@ -96,7 +96,7 @@ exports.readMinor = async (req, res, next) => {
         minor.need.push(v.sub_name);
       }
     });
-    return res.status(200).json(minor);
+    return res.json(minor);
   } catch (err) {
     throw new Error(err);
   }
