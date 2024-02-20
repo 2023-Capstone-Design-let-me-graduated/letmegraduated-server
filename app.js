@@ -1,7 +1,7 @@
 const dotenv = require("dotenv");
 const passport = require("passport");
 //test용
-// const bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 dotenv.config();
 
 const express = require("express");
