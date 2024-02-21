@@ -27,7 +27,7 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
     }
     // 여기 값 바꾸면 api 검사 가능
     return req.login(user, () => {
-      res.status(200).json("로그인 성공");
+      res.status(200).json(req.user);
     });
   })(req, res, next);
 });
