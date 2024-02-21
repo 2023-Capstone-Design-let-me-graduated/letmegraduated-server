@@ -43,12 +43,8 @@ exports.checkEng = async (req, res, next) => {
       }
     }
     // 업데이트
-    return updateDB(
-      "userData",
-      "users",
-      { userid: req.user.userid },
-      { eng: check }
-    );
+    updateDB("userData", "users", { userid: req.user.userid }, { eng: check });
+    res.json({check:check,condition:exam.condition});
   } catch (err) {
     throw new Error(err);
   }
