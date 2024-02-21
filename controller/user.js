@@ -38,7 +38,7 @@ exports.checkEng = async (req, res, next) => {
         }
       });
     } else {
-      if (+exam.condition[0] > +score) {
+      if (+exam.condition[0] < +score) {
         check = true;
       }
     }
