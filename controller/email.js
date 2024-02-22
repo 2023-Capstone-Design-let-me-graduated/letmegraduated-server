@@ -78,7 +78,7 @@ exports.emailForWithdrawal = (req, res, next) => {
       OAUTH_REFRESH_TOKEN,
     } = process.env;
 
-  const receiverEmail = db.readDB(
+  const receiver = db.readDB(
     "userData",
     "users",
     { username: userId },
@@ -119,6 +119,6 @@ exports.emailForWithdrawal = (req, res, next) => {
     };
     await transporter.sendMail(message);
   }
-  main(receiverEmail); //parameter로 receiverEmail 받아야 함.
+  main(receiver.email); //parameter로 receiverEmail 받아야 함.
   next();
 };
