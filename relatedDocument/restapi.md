@@ -13,5 +13,7 @@
 | /minor/semester | POST | selectedSemester{string} | 선택된 수강학기의 모든 교양 과목 리스트를 꺼내온다. | object(array) (ex) { need: [], foundamental: []} | O |
 | /minor | PUT | sFoundamentalList{array} sNeedList{array} | 기초교양, 교양필수리스트, 교양 학점, 총학점 업데이트 하고 리스트를 꺼내온다. | object(array) report = { state : {bool},checkState : {bool},sFoundamentalList : {bool},sNeedList : {bool},s_score : {int},s_fundamental_list : {array},s_need_list : {array}, } | O |
 | /normal | PUT | score{int} | 수강한 일반과목 총학점을 유저 데이터에 저장한다. | 리턴없음 | O |
-| /exam | POST | testType{string}, score{string} | 유저가 주간, 야간에 따라 시험 종류에 따른 제한 조건을 꺼내서 통과되는지 확인 | 통과여부(boolean) | O |
+| /exam | POST | testType{string}, score{string} | 유저가 주간, 야간에 따라 시험 종류에 따른 제한 조건을 꺼내서 통과되는지 확인 | {object}
+check{boolean}
+condition{array} | O |
 | /user | DELETE |  | 이메일 보내고 userid 삭제 | message(status:200){string} | O |

@@ -38,17 +38,13 @@ exports.checkEng = async (req, res, next) => {
         }
       });
     } else {
-      if (+exam.condition[0] > +score) {
+      if (+exam.condition[0] <= +score) {
         check = true;
       }
     }
     // 업데이트
-    return updateDB(
-      "userData",
-      "users",
-      { userid: req.user.userid },
-      { eng: check }
-    );
+    updateDB("userData", "users", { userid: req.user.userid }, { eng: check });
+    res.json({check:check,condition:exam.condition});
   } catch (err) {
     throw new Error(err);
   }
