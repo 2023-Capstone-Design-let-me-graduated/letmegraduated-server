@@ -38,7 +38,8 @@ router.get("/logout", (req, res, next) =>
     if (err) {
       return next(err);
     }
-  })
+    next();
+  },(req,res,next)=>{res.status(200).json("성공")})
 );
 
 // //테스트 용
