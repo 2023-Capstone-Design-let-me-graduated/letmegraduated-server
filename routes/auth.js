@@ -33,16 +33,14 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
 });
 
 // logout
-router.get(
-  "/logout",
-  (req, res, next) => {
-    req.logout();
-    next();
-  },
-  (req, res, next) => {
+router.get("/logout", (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
     res.status(200).json("성공");
-  }
-);
+  });
+});
 
 // //테스트 용
 // router.get("/login", (req, res, next) => {
