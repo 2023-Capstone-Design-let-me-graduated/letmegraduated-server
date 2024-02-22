@@ -34,12 +34,17 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
 
 // logout
 router.get("/logout", (req, res, next) =>
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
+  req.logout(
+    function (err) {
+      if (err) {
+        return next(err);
+      }
+      next();
+    },
+    (req, res, next) => {
+      res.status(200).json("성공");
     }
-    next();
-  },(req,res,next)=>{res.status(200).json("성공")})
+  )
 );
 
 // //테스트 용

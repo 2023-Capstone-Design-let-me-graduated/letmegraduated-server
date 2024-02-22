@@ -67,9 +67,8 @@ exports.emailForSignUp = (req, res, next) => {
  * 탈퇴 전에 호출해야 합니다.
  */
 exports.emailForWithdrawal = (req, res, next) => {
-  const userId = req.params.userId;
+  const user = req.user;
   const nodemailer = require("nodemailer");
-  const db = require("./db");
 
     const {
       OAUTH_USER,
@@ -77,13 +76,6 @@ exports.emailForWithdrawal = (req, res, next) => {
       OAUTH_CLIENT_SECRET,
       OAUTH_REFRESH_TOKEN,
     } = process.env;
-
-  const receiver = db.readDB(
-    "userData",
-    "users",
-    { username: userId },
-    false
-  ).email;
 
   async function main(receiverEmail) {
     const transporter = nodemailer.createTransport({
@@ -119,6 +111,6 @@ exports.emailForWithdrawal = (req, res, next) => {
     };
     await transporter.sendMail(message);
   }
-  main(receiver.email); //parameter로 receiverEmail 받아야 함.
+  main(user.email);
   next();
 };
