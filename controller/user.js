@@ -9,7 +9,7 @@ exports.checkEng = async (req, res, next) => {
   let exam,
     check = false;
   try {
-    if (major === "컴퓨터공학") {
+    if (major === "컴퓨터공학부 주간") {
       exam = await readDB(
         "criteria",
         "exam",
