@@ -103,7 +103,7 @@ exports.readMinor = async (req, res, next) => {
 };
 
 exports.takeSemester = (req, res, next) => {
-  res.json(req.user.semester);
+  res.json({semester: req.user.semester});
 };
 
 exports.updateUserMinor = async (req, res, next) => {
