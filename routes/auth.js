@@ -49,9 +49,10 @@ router.get("/logout", (req, res, next) => {
 
 // /user
 // emailForWithdrawal 후에 userid 삭제
-router.delete("/user", isLoggedIn, emailForWithdrawal, (req, res) => {
+router.delete("/user", isLoggedIn, emailForWithdrawal, (req, res, next) => {
   deleteDB("userData", "users", { userid: req.user.userid });
   res.status(200).json("탈퇴 성공");
+  next();
 });
 
 module.exports = router;
