@@ -36,9 +36,10 @@ app.use(
     proxy: true,
   })
 );
-//테스트 html
+
+//기본 html
 app.get("", (req, res) => {
-  res.sendFile(__dirname + "/index.html");
+  res.status(200).sendFile(__dirname + "/index.html");
 });
 // app.get("/login.html", (req, res) => {
 //   res.sendFile(__dirname + "/login.html");
