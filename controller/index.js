@@ -64,7 +64,7 @@ exports.updataUserExam = async (req, res, next) => {
 exports.readMajor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    major = { need: [], choice: [] };
+    major = { need: [], choice: [], foundamental: [] };
     const data = await readDB("timeTable", selectedSemester, {
       c_area: /전공/i,
     });
@@ -73,6 +73,8 @@ exports.readMajor = async (req, res, next) => {
         major.need.push(v);
       } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
         major.choice.push(v);
+      }else if (v.c_area.endsWith("기초")){
+        major.foundamental.push(v);
       }
     });
     return res.json(major);
