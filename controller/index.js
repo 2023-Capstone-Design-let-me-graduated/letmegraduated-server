@@ -201,8 +201,10 @@ exports.updateUserMinor = async (req, res, next) => {
 exports.updateUserMajor = async (req, res, next) => {
   const reqbodyneed = req.body.need;
   const reqbodychoice = req.body.choice;
+  const reqbodyfoundamental = req.body.foundamental;
   const needList = [];
   const choiceList = [];
+  const foundamentalList = [];
   let m_score = 0;
   let m_need_score = 0;
   let conditionName = { userid: req.user.userid };
@@ -228,6 +230,15 @@ exports.updateUserMajor = async (req, res, next) => {
         m_score += value.credit;
       }
     });
+    reqbodyfoundamental.forEach((value) => {
+      if (!foundamentalList.includes(value.sub_name)) {
+        foundamentalList.push(value.sub_name);
+        data.b_m_list.splice(data.b_m_list.indexOf(value.sub_name), 1);
+        foundamentalList.push(value.sub_name);
+        m_score += value.credit;
+      }
+    });
+    await updateDB("userData", "users", conditionName, {b_m_list: foundamentalList});
     const m_need_check = checkScore("m_need_score", m_need_score);
     const check = checkScore("m_score", m_score);
     if (
