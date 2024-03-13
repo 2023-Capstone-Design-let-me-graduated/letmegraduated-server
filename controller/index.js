@@ -255,6 +255,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
+      report["b_m_list"] = data.b_m_list; // 남은 전공기초과목
       await updateDB("userData", "users", conditionName, { m_check: true });
       res.json(report);
     } else {
@@ -267,6 +268,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
+      report["b_m_list"] = data.b_m_list; // 남은 전공기초과목
       if (
         !(
           reqbodyneed.includes("캡스톤디자인 (1)") &&
