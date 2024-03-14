@@ -12,6 +12,7 @@ exports.emailForSignUp = (req, res, next) => {
   const nodemailer = require("nodemailer");
   const { v4: uuidv4 } = require("uuid");
   const secretCode = uuidv4();
+  secretCode=secretCode.substring(0,6);
   req.secret = secretCode;
   
     const {

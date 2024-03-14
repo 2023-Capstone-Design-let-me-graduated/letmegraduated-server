@@ -55,7 +55,6 @@ exports.createUser = async (req, res, next) => {
       score: 0,
       m_score: 0,
       m_list: [],
-      b_m_list: [],
       m_need_score: 0,
       m_check: false,
       s_score: 0,
