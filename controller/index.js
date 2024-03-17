@@ -234,16 +234,17 @@ exports.updateUserMajor = async (req, res, next) => {
       if (!foundamentalList.includes(value.sub_name)) {
         foundamentalList.push(value.sub_name);
         data.m_b_list.splice(data.m_b_list.indexOf(value.sub_name), 1);
-        foundamentalList.push(value.sub_name);
         m_score += value.credit;
       }
     });
     await updateDB("userData", "users", conditionName, { m_b_list: foundamentalList });
     const m_need_check = checkScore("m_need_score", m_need_score);
+    const m_b_check = foundamentalList.length();
     const check = checkScore("m_score", m_score);
     if (
       reqbodyneed.includes("캡스톤디자인 (1)") &&
       reqbodyneed.includes("캡스톤디자인 (2)") &&
+      m_b_check==4 &&
       m_need_check &&
       check
     ) {
@@ -252,6 +253,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["checkState"] = true; // 학점을 다 들었는가?
       report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
       report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
+      report["m_b_check"]= true;
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
@@ -265,10 +267,11 @@ exports.updateUserMajor = async (req, res, next) => {
       report["checkState"] = true; // 학점을 다 들었는가?
       report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
       report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
+      report["m_b_check"]= true;
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
-      report["m_b_list"]=data.m_b_list;
+      report["m_b_list"] = data.m_b_list; // 남은 전공 기초 과목
       if (
         !(
           reqbodyneed.includes("캡스톤디자인 (1)") &&
@@ -279,6 +282,9 @@ exports.updateUserMajor = async (req, res, next) => {
       }
       if (!m_need_check) {
         report["m_need_checkState"] = false;
+      }
+      if (m_b_check!=4){
+        report["m_b_check"]=false;
       }
       if (!check) {
         report["checkState"] = false;
