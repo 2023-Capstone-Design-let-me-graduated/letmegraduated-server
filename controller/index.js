@@ -10,6 +10,29 @@ const divideList = async (list) => {
   // need, choice, fundamental로 분류할 객체 생성
   try {
     result = { need: [], choice: [], foundamental: [] };
+
+    list.forEach((v) => {
+      if (v.c_area.includes("전공")) {
+        if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
+          v.need.push(v);
+        }
+        else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
+          v.choice.push(v);
+        }
+        else if (v.c_area.endsWith("기초")) {
+          v.foundamental.push(v);
+        }
+      }
+      else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
+        if (v.c_major == "기초교양" || v.c_area == "기초교양") {
+          v.foundamental.push(v);
+        }
+        else {
+          v.need.push(v);
+        }
+      }
+    })
+    /*
     if (list[0].c_area.includes("전공")) {
       list.forEach((v) => {
         if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
@@ -32,6 +55,7 @@ const divideList = async (list) => {
         }
       });
     }
+    */
     return result;
   } catch (err) {
     throw new Error(err);
