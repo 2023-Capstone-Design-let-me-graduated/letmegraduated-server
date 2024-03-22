@@ -1,10 +1,10 @@
-| url | method | request body | description | response data type | 개발 여부 |
-| --- | --- | --- | --- | --- | --- |
-| /signup/email | POST | email{string} | nodemailer 모듈로 랜덤 수 자리 보내서 클라이언트로 16자리 전달 | secretcode{json} | O |
-| /signup | POST | userid{string}, password{string}, major{string}, email{string}, semesterlist{Array} | 아이디 비번, 전공, 이메일, 수강학기를 받아서 나머지는 기본 설정 완료 후 회원 가입 | 완료시 message{json} | O |
-| /login | POST | userid{string}, password{string} | 로그인 후 passport 세션을 서버에 저장 | 실패시 : message(status:404){string}, 성공시 : message(status:200){object} | O |
-| /logout | GET |  | 실패시 : message(status:404){string} 성공시 : message(status:200){string} |  | O |
-| /main | GET |  | 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건 | object(array)
+| url           | method | request body                                                                        | description                                                                       | response data type                                                         | 개발 여부 |
+| ------------- | ------ | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | --------- |
+| /signup/email | POST   | email{string}                                                                       | nodemailer 모듈로 랜덤 수 자리 보내서 클라이언트로 16자리 전달                    | secretcode{json}                                                           | O         |
+| /signup       | POST   | userid{string}, password{string}, major{string}, email{string}, semesterlist{Array} | 아이디 비번, 전공, 이메일, 수강학기를 받아서 나머지는 기본 설정 완료 후 회원 가입 | 완료시 message{json}                                                       | O         |
+| /login        | POST   | userid{string}, password{string}                                                    | 로그인 후 passport 세션을 서버에 저장                                             | 실패시 : message(status:404){string}, 성공시 : message(status:200){object} | O         |
+| /logout       | GET    |                                                                                     | 실패시 : message(status:404){string} 성공시 : message(status:200){string}         |                                                                            | O         |
+| /main         | GET    |                                                                                     | 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건                          | object(array)                                                              |
 report = { score : {int},
                 m_need_score : {int}, 
                 m_score : {int},

@@ -93,10 +93,10 @@ exports.readMinor = async (req, res, next) => {
     });
     data.forEach((v) => {
       if ((v.c_major == "기초교양") || (v.c_area == "기초교양")) {
-        minor.foundamental.push(v.sub_name);
+        minor.foundamental.push(v);
       } else {
-        minor.need.push(v.sub_name);
-      }
+        minor.need.push(v);
+      } 
     });
     return res.json(minor);
   } catch (err) {
