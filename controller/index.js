@@ -15,23 +15,19 @@ const divideList = async (list) => {
       if (v.c_area.includes("전공")) {
         if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
           v.need.push(v);
-        }
-        else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
+        } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
           v.choice.push(v);
-        }
-        else if (v.c_area.endsWith("기초")) {
+        } else if (v.c_area.endsWith("기초")) {
           v.foundamental.push(v);
         }
-      }
-      else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
+      } else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
         if (v.c_major == "기초교양" || v.c_area == "기초교양") {
           v.foundamental.push(v);
-        }
-        else {
+        } else {
           v.need.push(v);
         }
       }
-    })
+    });
     /*
     if (list[0].c_area.includes("전공")) {
       list.forEach((v) => {
@@ -172,7 +168,7 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
-
+  const { checkScore } = require("./check");
   const { result } = await divideList(req.body.list);
   const updateMinorList2 = result.need;
   const updateMinorList1 = result.foundamental;
@@ -220,7 +216,7 @@ exports.updateUserMinor = async (req, res, next) => {
       "s_list.sNeedList": sNeedList,
     });
 
-    const check = checkScore("s_core", s_score);
+    const check = await checkScore("s_core", s_score);
     // 졸업 요건
     if (check && sFoundamentalList.length === 6 && sNeedList.length === 3) {
       await updateDB("userData", "users", conditionName, { s_check: true });
@@ -264,7 +260,7 @@ exports.updateUserMinor = async (req, res, next) => {
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  const result=await divideList(req.body.list)
+  const result = await divideList(req.body.list);
   const reqbodyneed = result.need;
   const reqbodychoice = result.choice;
   const reqbodyfoundamental = result.foundamental;
@@ -273,6 +269,7 @@ exports.updateUserMajor = async (req, res, next) => {
   const foundamentalList = [];
   let m_score = 0;
   let m_need_score = 0;
+  const { checkScore } = require("./check");
   let conditionName = { userid: req.user.userid };
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
@@ -306,9 +303,9 @@ exports.updateUserMajor = async (req, res, next) => {
     await updateDB("userData", "users", conditionName, {
       m_b_list: foundamentalList,
     });
-    const m_need_check = checkScore("m_need_score", m_need_score);
+    const m_need_check = await checkScore("m_need_score", m_need_score);
     const m_b_check = foundamentalList.length();
-    const check = checkScore("m_score", m_score);
+    const check = await checkScore("m_score", m_score);
     if (
       reqbodyneed.includes("캡스톤디자인 (1)") &&
       reqbodyneed.includes("캡스톤디자인 (2)") &&
