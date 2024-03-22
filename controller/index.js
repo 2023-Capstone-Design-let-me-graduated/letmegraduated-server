@@ -284,6 +284,9 @@ exports.updateUserMajor = async (req, res, next) => {
     await updateDB("userData", "users", conditionName, {
       m_list: needList,
     });
+    await updateDB("userData", "users", conditionName, {
+      m_score: m_score,
+    });
     reqbodychoice.forEach((value) => {
       if (!choiceList.includes(value.sub_name)) {
         choiceList.push(value.sub_name);
