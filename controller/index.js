@@ -240,7 +240,7 @@ exports.updateUserMinor = async (req, res, next) => {
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  const {result}=divideList(req.body.list)
+  const {result}= await divideList(req.body.list)
   const reqbodyneed = result.need;
   const reqbodychoice = result.choice;
   const reqbodyfoundamental = result.foundamental;
