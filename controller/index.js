@@ -173,7 +173,7 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
 
-  const { result } = divideList(req.body.list);
+  const { result } = await divideList(req.body.list);
   const updateMinorList2 = result.need;
   const updateMinorList1 = result.foundamental;
 
@@ -264,7 +264,7 @@ exports.updateUserMinor = async (req, res, next) => {
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  const {result}= await divideList(req.body.list)
+  const result=await divideList(req.body.list)
   const reqbodyneed = result.need;
   const reqbodychoice = result.choice;
   const reqbodyfoundamental = result.foundamental;
