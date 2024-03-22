@@ -1,6 +1,6 @@
 // index
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
-const { check } = require("./check");
+const { checkScore } = require("./check");
 
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
