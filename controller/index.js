@@ -301,7 +301,7 @@ exports.updateUserMajor = async (req, res, next) => {
       m_b_list: foundamentalList,
     });
     const m_need_check = await checkScore("m_need_score", m_need_score);
-    const m_b_check = foundamentalList.length();
+    const m_b_check = foundamentalList.length;
     const check = await checkScore("m_score", m_score);
     if (
       reqbodyneed.includes("캡스톤디자인 (1)") &&
