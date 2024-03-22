@@ -2,6 +2,42 @@
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
 const { check } = require("./check");
 
+/**
+ * list를 받아서 need,choice,fundamental로 나누는 함수
+ * @param {array} list
+ */
+const divideList = async (list) => {
+  // need, choice, fundamental로 분류할 객체 생성
+  try {
+    result = { need: [], choice: [], foundamental: [] };
+    if (list[0].c_area.includes("전공")) {
+      list.forEach((v) => {
+        if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
+          result.need.push(v);
+        } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
+          result.choice.push(v);
+        } else if (v.c_area.endsWith("기초")) {
+          result.foundamental.push(v);
+        }
+      });
+    } else if (
+      list[0].c_area.includes("교양") ||
+      list[0].c_major.includes("교양")
+    ) {
+      list.forEach((v) => {
+        if (v.c_major == "기초교양" || v.c_area == "기초교양") {
+          list.foundamental.push(v);
+        } else {
+          list.need.push(v);
+        }
+      });
+    }
+    return result;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 // /main GET
 // 취득 학점, 전공필수, 전공 학점, 교양 학점, 자격기준 조건을 꺼내옴
 exports.readTotalData = async (req, res, next) => {
@@ -14,7 +50,7 @@ exports.readTotalData = async (req, res, next) => {
     );
     const report = {};
     if (
-      (req.user.m_score + req.user.s_score + req.user.n_score >= 140) &&
+      req.user.m_score + req.user.s_score + req.user.n_score >= 140 &&
       req.user.s_check &&
       req.user.m_check &&
       req.user.engcheck
@@ -92,11 +128,11 @@ exports.readMinor = async (req, res, next) => {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
     data.forEach((v) => {
-      if ((v.c_major == "기초교양") || (v.c_area == "기초교양")) {
+      if (v.c_major == "기초교양" || v.c_area == "기초교양") {
         minor.foundamental.push(v);
       } else {
         minor.need.push(v);
-      } 
+      }
     });
     return res.json(minor);
   } catch (err) {
@@ -109,9 +145,13 @@ exports.takeSemester = (req, res, next) => {
 };
 
 exports.updateUserMinor = async (req, res, next) => {
-  let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
-  let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
-  // 데이터 받는 코드
+  // let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
+  // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
+  // // 데이터 받는 코드
+
+  const { result } = divideList(req.body.list);
+  const updateMinorList2 = result.need;
+  const updateMinorList1 = result.foundamental;
 
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
@@ -131,10 +171,12 @@ exports.updateUserMinor = async (req, res, next) => {
     for (let list of updateMinorList1) {
       if (!sFoundamentalList.includes(list.sub_name)) {
         sFoundamentalList.push(list.sub_name);
-        allFoundamentalList.splice(allFoundamentalList.indexOf(list.sub_name), 1);
+        allFoundamentalList.splice(
+          allFoundamentalList.indexOf(list.sub_name),
+          1
+        );
         s_score += list.credit;
       }
-
     }
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
@@ -155,8 +197,8 @@ exports.updateUserMinor = async (req, res, next) => {
     });
 
     const check = checkScore("s_core", s_score);
-    // 졸업 요건 
-    if (check && (sFoundamentalList.length === 6 && sNeedList.length === 3)) {
+    // 졸업 요건
+    if (check && sFoundamentalList.length === 6 && sNeedList.length === 3) {
       await updateDB("userData", "users", conditionName, { s_check: true });
 
       const report = {};
@@ -165,19 +207,19 @@ exports.updateUserMinor = async (req, res, next) => {
       report["sFoundamentalList"] = true; // 기초교양 다 들었는지
       report["sNeedList"] = true; // 교양 필수 다들었는지
       report["s_score"] = s_score; // 현재 교양학점 학점
-      report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+      report["s_fundamental_list"] = allFoundamentalList; // 부족한 기초교양리스트
       report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
       res.json(report);
     } else {
       await updateDB("userData", "users", conditionName, { s_check: false });
 
-      const reprot = {};
+      const report = {};
       report["state"] = false;
       report["checkState"] = false; // 학점을 다 들었는가?
       report["sFoundamentalList"] = false; // 기초교양 다 들었는지
       report["sNeedList"] = false; // 교양 필수 다들었는지
       report["s_score"] = s_score; // 현재 교양학점 학점
-      report["s_fundamental_list"] = allFoundamentalList // 부족한 기초교양리스트
+      report["s_fundamental_list"] = allFoundamentalList; // 부족한 기초교양리스트
       report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
       // 유저기초교양과 졸업요건의 기초교양을 비교
       if (allFoundamentalListN === sFoundamentalList) {
@@ -192,16 +234,16 @@ exports.updateUserMinor = async (req, res, next) => {
       }
       res.json(report);
     }
-
   } catch (err) {
     throw new Error(err);
   }
 };
 
 exports.updateUserMajor = async (req, res, next) => {
-  const reqbodyneed = req.body.need;
-  const reqbodychoice = req.body.choice;
-  const reqbodyfoundamental = req.body.foundamental;
+  const {result}=divideList(req.body.list)
+  const reqbodyneed = result.need;
+  const reqbodychoice = result.choice;
+  const reqbodyfoundamental = result.foundamental;
   const needList = [];
   const choiceList = [];
   const foundamentalList = [];
@@ -237,14 +279,16 @@ exports.updateUserMajor = async (req, res, next) => {
         m_score += value.credit;
       }
     });
-    await updateDB("userData", "users", conditionName, { m_b_list: foundamentalList });
+    await updateDB("userData", "users", conditionName, {
+      m_b_list: foundamentalList,
+    });
     const m_need_check = checkScore("m_need_score", m_need_score);
     const m_b_check = foundamentalList.length();
     const check = checkScore("m_score", m_score);
     if (
       reqbodyneed.includes("캡스톤디자인 (1)") &&
       reqbodyneed.includes("캡스톤디자인 (2)") &&
-      m_b_check==4 &&
+      m_b_check == 4 &&
       m_need_check &&
       check
     ) {
@@ -253,7 +297,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["checkState"] = true; // 학점을 다 들었는가?
       report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
       report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
-      report["m_b_check"]= true;
+      report["m_b_check"] = true;
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
@@ -267,7 +311,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["checkState"] = true; // 학점을 다 들었는가?
       report["m_need_checkState"] = true; // 필수 과목을 조건에 맞게 다 들었는가?
       report["capstoneState"] = true; // 캡스톤 디자인 1 2 를 들었는가?
-      report["m_b_check"]= true;
+      report["m_b_check"] = true;
       report["m_score"] = m_score; // 현재 전공 학점
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
@@ -283,8 +327,8 @@ exports.updateUserMajor = async (req, res, next) => {
       if (!m_need_check) {
         report["m_need_checkState"] = false;
       }
-      if (m_b_check!=4){
-        report["m_b_check"]=false;
+      if (m_b_check != 4) {
+        report["m_b_check"] = false;
       }
       if (!check) {
         report["checkState"] = false;
@@ -297,5 +341,10 @@ exports.updateUserMajor = async (req, res, next) => {
 };
 
 exports.updateUserNormal = async (req, res, next) => {
-  return await updateDB("userData", "users", { userid: req.user.userid }, { n_score: req.body.score });
-}
+  return await updateDB(
+    "userData",
+    "users",
+    { userid: req.user.userid },
+    { n_score: req.body.score }
+  );
+};
