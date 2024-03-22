@@ -11,24 +11,23 @@ const divideList = async (list) => {
   try {
     result = { need: [], choice: [], foundamental: [] };
 
-    list.forEach((v) => {
-      if (v.c_area.includes("전공")) {
-        if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-          v.need.push(v);
-        } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-          v.choice.push(v);
-        } else if (v.c_area.endsWith("기초")) {
-          v.foundamental.push(v);
-        }
-      } else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
-        if (v.c_major == "기초교양" || v.c_area == "기초교양") {
-          v.foundamental.push(v);
-        } else {
-          v.need.push(v);
-        }
-      }
-    });
-    /*
+    // list.forEach((v) => {
+    //   if (v.c_area.includes("전공")) {
+    //     if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
+    //       v.need.push(v);
+    //     } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
+    //       v.choice.push(v);
+    //     } else if (v.c_area.endsWith("기초")) {
+    //       v.foundamental.push(v);
+    //     }
+    //   } else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
+    //     if (v.c_major == "기초교양" || v.c_area == "기초교양") {
+    //       v.foundamental.push(v);
+    //     } else {
+    //       v.need.push(v);
+    //     }
+    //   }
+    // });
     if (list[0].c_area.includes("전공")) {
       list.forEach((v) => {
         if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
@@ -51,7 +50,7 @@ const divideList = async (list) => {
         }
       });
     }
-    */
+
     return result;
   } catch (err) {
     throw new Error(err);
@@ -168,7 +167,6 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
-  const { checkScore } = require("./check");
   const { result } = await divideList(req.body.list);
   const updateMinorList2 = result.need;
   const updateMinorList1 = result.foundamental;
@@ -269,7 +267,6 @@ exports.updateUserMajor = async (req, res, next) => {
   const foundamentalList = [];
   let m_score = 0;
   let m_need_score = 0;
-  const { checkScore } = require("./check");
   let conditionName = { userid: req.user.userid };
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
