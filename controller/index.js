@@ -125,11 +125,17 @@ exports.readMajor = async (req, res, next) => {
     });
     data.forEach((v) => {
       if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-        major.need.push(v);
+        if (!major.need.includes(v.sub_name)) {
+           major.need.push(v);
+        }
       } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-        major.choice.push(v);
+        if (!major.choice.includes(v.sub_name)) {
+          major.choice.push(v);
+        }
       } else if (v.c_area.endsWith("기초")) {
-        major.foundamental.push(v);
+        if (!major.foundamental.includes(v.sub_name)) {
+          major.foundamental.push(v);
+        }
       }
     });
     return res.json(major);
@@ -148,9 +154,13 @@ exports.readMinor = async (req, res, next) => {
     });
     data.forEach((v) => {
       if (v.c_major == "기초교양" || v.c_area == "기초교양") {
-        minor.foundamental.push(v);
+        if (!minor.foundamental.includes(v.sub_name)) {
+          minor.foundamental.push(v);
+        }
       } else {
-        minor.need.push(v);
+        if (!minor.need.includes(v.sub_name)) {
+          minor.need.push(v);
+        }
       }
     });
     return res.json(minor);
@@ -168,14 +178,14 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
   const { result } = await divideList(req.body.list);
-  const updateMinorList2 = result.need;
-  const updateMinorList1 = result.foundamental;
+  const reqbodyneed = result.need;
+  const reqbodyfoundamental = result.foundamental;
 
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
-
-  let conditionName = { userid: req.user.userid };
-  // condition
+  let s_score = req.user.sScore; // 교양 점수
+  let n_score = 0; // 교양피수 점수
+  let conditionName = { userid: req.user.userid }; // condition
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
 
@@ -184,9 +194,9 @@ exports.updateUserMinor = async (req, res, next) => {
 
     let allFoundamentalListN = data.s_list["기초교양"]; // (확인용)졸업요건 기초교양
     let allNeedListN = data.s_list["교양필수"]; // (확인용)졸업요건 교양필수
-    let s_score = 0;
 
-    for (let list of updateMinorList1) {
+    // 교양기초 중복안되게 리스트에 넣기
+    for (let list of reqbodyfoundamental) {
       if (!sFoundamentalList.includes(list.sub_name)) {
         sFoundamentalList.push(list.sub_name);
         allFoundamentalList.splice(
@@ -200,18 +210,25 @@ exports.updateUserMinor = async (req, res, next) => {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
 
-    // }
-    // 필수 관련
-    // 데이터 받아서 > c_area에 중복 안되게 넣고 s_score에 값 추가
-    for (let list of updateMinorList2) {
+    await updateDB("userData", "users", conditionName, {
+      s_score: s_score,
+    });
+
+    // 교양 필수 관련
+    // 데이터 받아서 > c_area에 중복 안되게 넣고 n_score에 학점 추가
+    for (let list of reqbodyneed) {
       if (!sNeedList.includes(list.c_area)) {
         sNeedList.push(list.c_area);
         allNeedList.splice(allNeedList.indexOf(list.c_area), 1);
-        s_core += list.credit;
+        n_score += list.credit;
       }
     }
     await updateDB("userData", "users", conditionName, {
       "s_list.sNeedList": sNeedList,
+    });
+
+    await updateDB("userData", "users", conditionName, {
+      n_score: n_score,
     });
 
     const check = await checkScore("s_core", s_score);

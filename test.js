@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
+const { createDB, readDB, updateDB, deleteDB } = require("./db");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
