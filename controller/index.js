@@ -2,6 +2,20 @@
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
 const { checkScore } = require("./check");
 
+
+/**
+ *  capstone1, 2들었는지 확인 하는 함수
+ *  @param {object} reqbodyneed
+ * 
+*/
+const capstone = async(reqbodyneed, checkCapstone) => {
+  for (let item of reqbodyneed) {
+      if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
+          return true;
+      }
+  }
+  return false;
+}
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
  * @param {array} list
@@ -323,10 +337,13 @@ exports.updateUserMajor = async (req, res, next) => {
     const m_need_check = await checkScore("m_need_score", m_need_score);
     const m_b_check = foundamentalList.length;
     const check = await checkScore("m_score", m_score);
+    let capstone1 = await capstone(reqbodyneed, "캡스톤디자인(1)");
+    let capstone2 = await capstone(reqbodyneed, "캡스톤디자인(2)");
+
     if (
-      reqbodyneed.includes("캡스톤디자인 (1)") &&
-      reqbodyneed.includes("캡스톤디자인 (2)") &&
-      m_b_check == 4 &&
+      capstone1 &&
+      capstone2 &&
+      m_b_check == 5 &&
       m_need_check &&
       check
     ) {
@@ -354,12 +371,7 @@ exports.updateUserMajor = async (req, res, next) => {
       report["m_need_score"] = m_need_score; // 현재 필수 과목 학점
       report["m_need_list"] = data.m_list; // 남은 필수 과목
       report["m_b_list"] = data.m_b_list; // 남은 전공 기초 과목
-      if (
-        !(
-          reqbodyneed.includes("캡스톤디자인 (1)") &&
-          reqbodyneed.includes("캡스톤디자인 (2)")
-        )
-      ) {
+      if (!(capstone1 && capstone2)) {
         report["capstoneState"] = false;
       }
       if (!m_need_check) {

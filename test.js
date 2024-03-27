@@ -1,6 +1,6 @@
-require("dotenv").config();
-const { MongoClient } = require("mongodb");
-const { createDB, readDB, updateDB, deleteDB } = require("./db");
+// require("dotenv").config();
+// const { MongoClient } = require("mongodb");
+// const { createDB, readDB, updateDB, deleteDB } = require("./db");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
@@ -590,3 +590,40 @@ const { createDB, readDB, updateDB, deleteDB } = require("./db");
 //   main(receiverEmail);
 //   // next();
 // })();
+
+const capstone = async(reqbodyneed, checkCapstone) => {
+    for (let item of reqbodyneed) {
+        if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
+            return true;
+        }
+    }
+    return false;
+}
+
+const data = {
+    "list": [
+      {
+        "_id": "65a6972665d1145955e6d8e3",
+        "major": "컴퓨터공학부",
+        "grade": 1,
+        "c_major": "전공기초",
+        "c_area": "전공기초",
+        "sub_name": "컴퓨터공학개론",
+        "credit": 2
+      },
+      {
+        "_id": "65a6972665d1145955e6d8ec",
+        "major": "컴퓨터공학부",
+        "grade": 2,
+        "c_major": "전공필수",
+        "c_area": "전공필수",
+        "sub_name": "캡스톤디자인(1)",
+        "credit": 3
+      }
+    ]
+  };
+
+console.log(capstone(data.list, "캡스톤디자인(1)"));
+console.log(capstone(data.list, "캡스톤디자인(2)"));
+console.log(capstone(data.list, "캡스톤디자인(2)"));
+
