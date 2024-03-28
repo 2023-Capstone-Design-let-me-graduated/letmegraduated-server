@@ -2,20 +2,19 @@
 const { createDB, readDB, updateDB, deleteDB } = require("./db");
 const { checkScore } = require("./check");
 
-
 /**
  *  capstone1, 2들었는지 확인 하는 함수
  *  @param {object} reqbodyneed
- * 
-*/
-const capstone = async(reqbodyneed, checkCapstone) => {
+ *
+ */
+const capstone = async (reqbodyneed, checkCapstone) => {
   for (let item of reqbodyneed) {
-      if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
-          return true;
-      }
+    if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
+      return true;
+    }
   }
   return false;
-}
+};
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
  * @param {array} list
@@ -140,7 +139,7 @@ exports.readMajor = async (req, res, next) => {
     data.forEach((v) => {
       if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
         if (!major.need.includes(v.sub_name)) {
-           major.need.push(v);
+          major.need.push(v);
         }
       } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
         if (!major.choice.includes(v.sub_name)) {
@@ -192,6 +191,7 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
   const { result } = await divideList(req.body.list);
+  const reqbodysScore = req.body.sScore;
   const reqbodyneed = result.need;
   const reqbodyfoundamental = result.foundamental;
 
@@ -206,8 +206,8 @@ exports.updateUserMinor = async (req, res, next) => {
     let allFoundamentalList = data.s_list["기초교양"]; // (수정용)졸업요건 기초교양
     let allNeedList = data.s_list["교양필수"]; // (수정용)졸업요건 교양필수
 
-    let allFoundamentalListN = data.s_list["기초교양"]; // (확인용)졸업요건 기초교양
-    let allNeedListN = data.s_list["교양필수"]; // (확인용)졸업요건 교양필수
+    let allFoundamentalListN = [...allFoundamentalList]; // (확인용)졸업요건 기초교양
+    let allNeedListN = [...allNeedList]; // (확인용)졸업요건 교양필수
 
     // 교양기초 중복안되게 리스트에 넣기
     for (let list of reqbodyfoundamental) {
@@ -220,6 +220,7 @@ exports.updateUserMinor = async (req, res, next) => {
         s_score += list.credit;
       }
     }
+    s_score+=reqbodysScore;
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
@@ -340,13 +341,7 @@ exports.updateUserMajor = async (req, res, next) => {
     let capstone1 = await capstone(reqbodyneed, "캡스톤디자인(1)");
     let capstone2 = await capstone(reqbodyneed, "캡스톤디자인(2)");
 
-    if (
-      capstone1 &&
-      capstone2 &&
-      m_b_check == 5 &&
-      m_need_check &&
-      check
-    ) {
+    if (capstone1 && capstone2 && m_b_check == 5 && m_need_check && check) {
       const report = {};
       report["state"] = true;
       report["checkState"] = true; // 학점을 다 들었는가?
