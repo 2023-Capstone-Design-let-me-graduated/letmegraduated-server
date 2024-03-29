@@ -127,7 +127,9 @@ exports.updataUserExam = async (req, res, next) => {
     );
   }
 };
-
+const checkDuplication = (subjectList, dataObject) => {
+  return subjectList.som((v) => v.sub_name === dataObject.sub_name);
+}
 // /major/semester | POST | 선택된수강학기{string} | 선택된 수강학기의 모든 전공 과목 리스트를 꺼내온다. | object(array)
 exports.readMajor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
@@ -138,15 +140,15 @@ exports.readMajor = async (req, res, next) => {
     });
     data.forEach((v) => {
       if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-        if (!major.need.includes(v.sub_name)) {
+        if (!checkDuplication(major.need, v)) {
           major.need.push(v);
         }
       } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-        if (!major.choice.includes(v.sub_name)) {
+        if (!checkDuplication(major.choice, v)) {
           major.choice.push(v);
         }
       } else if (v.c_area.endsWith("기초")) {
-        if (!major.foundamental.includes(v.sub_name)) {
+        if (!checkDuplication(major.foundamental, v)) {
           major.foundamental.push(v);
         }
       }
@@ -167,11 +169,11 @@ exports.readMinor = async (req, res, next) => {
     });
     data.forEach((v) => {
       if (v.c_major == "기초교양" || v.c_area == "기초교양") {
-        if (!minor.foundamental.includes(v.sub_name)) {
+        if (!checkDuplication(minor.foundamental, v)) {
           minor.foundamental.push(v);
         }
       } else {
-        if (!minor.need.includes(v.sub_name)) {
+        if (!checkDuplication(major.need, v)) {
           minor.need.push(v);
         }
       }
