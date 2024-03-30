@@ -168,12 +168,12 @@ exports.readMinor = async (req, res, next) => {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
     data.forEach((v) => {
-      if (v.c_major == "기초교양" || v.c_area == "기초교양") {
+      if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
         if (!checkDuplication(minor.foundamental, v)) {
           minor.foundamental.push(v);
         }
       } else {
-        if (!checkDuplication(major.need, v)) {
+        if (!checkDuplication(minor.need, v)) {
           minor.need.push(v);
         }
       }

@@ -1,6 +1,6 @@
-// require("dotenv").config();
-// const { MongoClient } = require("mongodb");
-// const { createDB, readDB, updateDB, deleteDB } = require("./db");
+require("dotenv").config();
+const { MongoClient } = require("mongodb");
+const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
 
 // const uri = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PASSWORD}@cluster0.tfhjsuj.mongodb.net/`;
 // console.log(uri);
@@ -591,39 +591,68 @@
 //   // next();
 // })();
 
-const capstone = async(reqbodyneed, checkCapstone) => {
-    for (let item of reqbodyneed) {
-        if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
-            return true;
-        }
-    }
-    return false;
-}
+// const capstone = async(reqbodyneed, checkCapstone) => {
+//     for (let item of reqbodyneed) {
+//         if (item.hasOwnProperty("sub_name") && item.sub_name == checkCapstone) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
 
-const data = {
-    "list": [
-      {
-        "_id": "65a6972665d1145955e6d8e3",
-        "major": "컴퓨터공학부",
-        "grade": 1,
-        "c_major": "전공기초",
-        "c_area": "전공기초",
-        "sub_name": "컴퓨터공학개론",
-        "credit": 2
-      },
-      {
-        "_id": "65a6972665d1145955e6d8ec",
-        "major": "컴퓨터공학부",
-        "grade": 2,
-        "c_major": "전공필수",
-        "c_area": "전공필수",
-        "sub_name": "캡스톤디자인(1)",
-        "credit": 3
-      }
-    ]
-  };
+// const data = {
+//     "list": [
+//       {
+//         "_id": "65a6972665d1145955e6d8e3",
+//         "major": "컴퓨터공학부",
+//         "grade": 1,
+//         "c_major": "전공기초",
+//         "c_area": "전공기초",
+//         "sub_name": "컴퓨터공학개론",
+//         "credit": 2
+//       },
+//       {
+//         "_id": "65a6972665d1145955e6d8ec",
+//         "major": "컴퓨터공학부",
+//         "grade": 2,
+//         "c_major": "전공필수",
+//         "c_area": "전공필수",
+//         "sub_name": "캡스톤디자인(1)",
+//         "credit": 3
+//       }
+//     ]
+//   };
 
-console.log(capstone(data.list, "캡스톤디자인(1)"));
-console.log(capstone(data.list, "캡스톤디자인(2)"));
-console.log(capstone(data.list, "캡스톤디자인(2)"));
+// console.log(capstone(data.list, "캡스톤디자인(1)"));
+// console.log(capstone(data.list, "캡스톤디자인(2)"));
+// console.log(capstone(data.list, "캡스톤디자인(2)"));
 
+// const checkDuplication = (subjectList, dataObject) => {
+//   return subjectList.some((v) => v.sub_name === dataObject.sub_name);
+// };
+
+// const readMinor = async (req, res, next) => {
+//   const selectedSemester = "2020_1";
+//   try {
+//     minor = { need: [], foundamental: [] };
+//     const data = await readDB("timeTable", selectedSemester, {
+//       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
+//     });
+//     data.forEach((v) => {
+//       if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
+//         if (!checkDuplication(minor.foundamental, v)) {
+//           minor.foundamental.push(v);
+//         }
+//       } else {
+//         if (!checkDuplication(minor.need, v)) {
+//           minor.need.push(v);
+//         }
+//       }
+//     });
+//     console.log(minor);
+//   } catch (err) {
+//     throw new Error(err);
+//   }
+// };
+
+// readMinor();
