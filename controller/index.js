@@ -15,6 +15,10 @@ const capstone = async (reqbodyneed, checkCapstone) => {
   }
   return false;
 };
+
+const checkDuplication = async (subjectList, dataObject) => {
+  return subjectList.som((v) => v.sub_name === dataObject.sub_name);
+};
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
  * @param {array} list
@@ -23,24 +27,6 @@ const divideList = async (list) => {
   // need, choice, fundamental로 분류할 객체 생성
   try {
     result = { need: [], choice: [], foundamental: [] };
-
-    // list.forEach((v) => {
-    //   if (v.c_area.includes("전공")) {
-    //     if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-    //       v.need.push(v);
-    //     } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-    //       v.choice.push(v);
-    //     } else if (v.c_area.endsWith("기초")) {
-    //       v.foundamental.push(v);
-    //     }
-    //   } else if (v.c_area.includes("교양") || v.c_major.includes("교양")) {
-    //     if (v.c_major == "기초교양" || v.c_area == "기초교양") {
-    //       v.foundamental.push(v);
-    //     } else {
-    //       v.need.push(v);
-    //     }
-    //   }
-    // });
     if (list[0].c_area.includes("전공")) {
       list.forEach((v) => {
         if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
@@ -127,32 +113,30 @@ exports.updataUserExam = async (req, res, next) => {
     );
   }
 };
-const checkDuplication = (subjectList, dataObject) => {
-  return subjectList.som((v) => v.sub_name === dataObject.sub_name);
-}
+
 // /major/semester | POST | 선택된수강학기{string} | 선택된 수강학기의 모든 전공 과목 리스트를 꺼내온다. | object(array)
 exports.readMajor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    major = { need: [], choice: [], foundamental: [] };
+    let major = { need: [], choice: [], foundamental: [] };
     const data = await readDB("timeTable", selectedSemester, {
       c_area: /전공/i,
     });
-    data.forEach((v) => {
+    for (const v of data) {
       if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-        if (!checkDuplication(major.need, v)) {
+        if (!(await checkDuplication(major.need, v))) {
           major.need.push(v);
         }
       } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-        if (!checkDuplication(major.choice, v)) {
+        if (!(await checkDuplication(major.choice, v))) {
           major.choice.push(v);
         }
       } else if (v.c_area.endsWith("기초")) {
-        if (!checkDuplication(major.foundamental, v)) {
+        if (!(await checkDuplication(major.foundamental, v))) {
           major.foundamental.push(v);
         }
       }
-    });
+    }
     return res.json(major);
   } catch (err) {
     throw new Error(err);
@@ -163,21 +147,21 @@ exports.readMajor = async (req, res, next) => {
 exports.readMinor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    minor = { need: [], foundamental: [] };
+    let minor = { need: [], foundamental: [] };
     const data = await readDB("timeTable", selectedSemester, {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
-    data.forEach((v) => {
+    for (const v of data) {
       if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
-        if (!checkDuplication(minor.foundamental, v)) {
+        if (!(await checkDuplication(minor.foundamental, v))) {
           minor.foundamental.push(v);
         }
       } else {
-        if (!checkDuplication(minor.need, v)) {
+        if (!(await checkDuplication(minor.need, v))) {
           minor.need.push(v);
         }
       }
-    });
+    }
     return res.json(minor);
   } catch (err) {
     throw new Error(err);
