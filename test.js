@@ -627,32 +627,32 @@ const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
 // console.log(capstone(data.list, "캡스톤디자인(2)"));
 // console.log(capstone(data.list, "캡스톤디자인(2)"));
 
-const checkDuplication = (subjectList, dataObject) => {
-  return subjectList.some((v) => v.sub_name === dataObject.sub_name);
-};
-
-const readMinor = async (req, res, next) => {
-  const selectedSemester = "2020_1";
-  try {
-    minor = { need: [], foundamental: [] };
-    const data = await readDB("timeTable", selectedSemester, {
-      $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
-    });
-    data.forEach((v) => {
-      if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
-        if (!checkDuplication(minor.foundamental, v)) {
-          minor.foundamental.push(v);
-        }
-      } else {
-        if (!checkDuplication(minor.need, v)) {
-          minor.need.push(v);
+const checkDuplication = async (subjectList, dataObject) => {
+    return subjectList.some((v) => v.sub_name === dataObject.sub_name);
+  };
+  
+  const readMinor = async (req, res, next) => {
+    const selectedSemester = "2019_1";
+    try {
+      let minor = { need: [], foundamental: [] };
+      const data = await readDB("timeTable", selectedSemester, {
+        $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
+      });
+      for (const v of data) {
+        if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
+          if (!(await checkDuplication(minor.foundamental, v))) {
+            minor.foundamental.push(v);
+          }
+        } else {
+          if (!(await checkDuplication(minor.need, v))) {
+            minor.need.push(v);
+          }
         }
       }
-    });
-    console.log(minor);
-  } catch (err) {
-    throw new Error(err);
-  }
-};
-
-readMinor();
+     console.log(minor);
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+  
+  readMinor();

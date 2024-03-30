@@ -17,7 +17,7 @@ const capstone = async (reqbodyneed, checkCapstone) => {
 };
 
 const checkDuplication = async (subjectList, dataObject) => {
-  return subjectList.som((v) => v.sub_name === dataObject.sub_name);
+  return subjectList.some((v) => v.sub_name === dataObject.sub_name);
 };
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
