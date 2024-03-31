@@ -600,59 +600,117 @@ const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
 //     return false;
 // }
 
-// const data = {
-//     "list": [
-//       {
-//         "_id": "65a6972665d1145955e6d8e3",
-//         "major": "컴퓨터공학부",
-//         "grade": 1,
-//         "c_major": "전공기초",
-//         "c_area": "전공기초",
-//         "sub_name": "컴퓨터공학개론",
-//         "credit": 2
-//       },
-//       {
-//         "_id": "65a6972665d1145955e6d8ec",
-//         "major": "컴퓨터공학부",
-//         "grade": 2,
-//         "c_major": "전공필수",
-//         "c_area": "전공필수",
-//         "sub_name": "캡스톤디자인(1)",
-//         "credit": 3
-//       }
-//     ]
-//   };
+const data = {
+    "list": [
+      {
+        "_id": "65a6972665d1145955e6d8e3",
+        "major": "컴퓨터공학부",
+        "grade": 4,
+        "c_major": "전공기초",
+        "c_area": "전공기초",
+        "sub_name": "컴퓨터공학개론",
+        "credit": 2
+      },
+      {
+        "_id": "65a6972665d1145955e6d8ec",
+        "major": "컴퓨터공학부",
+        "grade": 1,
+        "c_major": "전공필수",
+        "c_area": "전공필수",
+        "sub_name": "캡스톤디자인(1)",
+        "credit": 3
+      },
+      {
+        "_id": "65a6972665d1145955e6d8ec",
+        "major": "컴퓨터공학부",
+        "grade": 3,
+        "c_major": "전공필수",
+        "c_area": "전공필수",
+        "sub_name": "캡스톤디자인(1)",
+        "credit": 3
+      },
+      {
+        "_id": "65a6972665d1145955e6d8ec",
+        "major": "컴퓨터공학부",
+        "grade": 1,
+        "c_major": "전공필수",
+        "c_area": "전공필수",
+        "sub_name": "캡스톤디자인(1)",
+        "credit": 3
+      },
+    ]
+  };
 
 // console.log(capstone(data.list, "캡스톤디자인(1)"));
 // console.log(capstone(data.list, "캡스톤디자인(2)"));
 // console.log(capstone(data.list, "캡스톤디자인(2)"));
 
 const checkDuplication = async (subjectList, dataObject) => {
-    return subjectList.some((v) => v.sub_name === dataObject.sub_name);
-  };
-  
-  const readMinor = async (req, res, next) => {
-    const selectedSemester = "2019_1";
-    try {
-      let minor = { need: [], foundamental: [] };
-      const data = await readDB("timeTable", selectedSemester, {
-        $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
-      });
-      for (const v of data) {
-        if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
-          if (!(await checkDuplication(minor.foundamental, v))) {
-            minor.foundamental.push(v);
+  return subjectList.some((v) => v.sub_name === dataObject.sub_name);
+};
+
+const readMinor = async (req, res, next) => {
+  const selectedSemester = "2020_1";
+  try {
+    let minor = { need: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []}, 
+                  foundamental: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []} };
+    const data = await readDB("timeTable", selectedSemester, {
+      $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
+    });
+    for (const v of data) {
+      if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
+        if (!((await checkDuplication(minor.need.grade1, v)) ||
+              (await checkDuplication(minor.need.grade2, v)) ||
+              (await checkDuplication(minor.need.grade3, v)) ||
+              (await checkDuplication(minor.need.grade4, v)) ||
+              (await checkDuplication(minor.need.gradeAll, v)))) {
+          switch (v.grade) {
+            case 1:
+              minor.need.grade1.push(v);
+              break;
+            case 2:
+              minor.need.grade2.push(v);
+              break;
+            case 3:
+              minor.need.grade3.push(v);
+              break;
+            case 4:
+              minor.need.grade4.push(v);
+              break;
+            default:
+              minor.need.gradeAll.push(v);
+              break;
           }
-        } else {
-          if (!(await checkDuplication(minor.need, v))) {
-            minor.need.push(v);
+        }
+      } else {
+        if (!((await checkDuplication(minor.foundamental.grade1, v)) ||
+              (await checkDuplication(minor.foundamental.grade2, v)) ||
+              (await checkDuplication(minor.foundamental.grade3, v)) ||
+              (await checkDuplication(minor.foundamental.grade4, v)) ||
+              (await checkDuplication(minor.foundamental.gradeAll, v)))) {
+          switch (v.grade) {
+            case 1:
+              minor.foundamental.grade1.push(v);
+              break;
+            case 2:
+              minor.foundamental.grade2.push(v);
+              break;
+            case 3:
+              minor.foundamental.grade3.push(v);
+              break;
+            case 4:
+              minor.foundamental.grade4.push(v);
+              break;
+            default:
+              minor.foundamental.gradeAll.push(v);
+              break;
           }
         }
       }
-     console.log(minor);
-    } catch (err) {
-      throw new Error(err);
     }
-  };
-  
-  readMinor();
+    console.log(minor);
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+readMinor();
