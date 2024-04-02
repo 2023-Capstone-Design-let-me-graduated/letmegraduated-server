@@ -19,6 +19,7 @@ const capstone = async (reqbodyneed, checkCapstone) => {
 const checkDuplication = async (subjectList, dataObject) => {
   return subjectList.some((v) => v.sub_name === dataObject.sub_name);
 };
+
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
  * @param {array} list
@@ -118,89 +119,11 @@ exports.updataUserExam = async (req, res, next) => {
 exports.readMajor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    // let major = {
-    //   need: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []}, 
-    //   choice: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []},
-    //   foundamental: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []} 
-    // };
     let major = {need: [], choice: [], foundamental: []};
     const data = await readDB("timeTable", selectedSemester, {
       c_area: /전공/i,
     });
     for (const v of data) {
-      // if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
-      //   if (!((await checkDuplication(major.need.grade1, v)) ||
-      //         (await checkDuplication(major.need.grade2, v)) ||
-      //         (await checkDuplication(major.need.grade3, v)) ||
-      //         (await checkDuplication(major.need.grade4, v)) ||
-      //         (await checkDuplication(major.need.gradeAll, v)))) {
-      //     switch (v.grade) {
-      //       case 1:
-      //         major.need.grade1.push(v);
-      //         break;
-      //       case 2:
-      //         major.need.grade2.push(v);
-      //         break;
-      //       case 3:
-      //         major.need.grade3.push(v);
-      //         break;
-      //       case 4:
-      //         major.need.grade4.push(v);
-      //         break;
-      //       default:
-      //         major.need.gradeAll.push(v);
-      //         break;
-      //     }
-      //   }
-      // } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
-      //   if (!((await checkDuplication(major.choice.grade1, v)) ||
-      //         (await checkDuplication(major.choice.grade2, v)) ||
-      //         (await checkDuplication(major.choice.grade3, v)) ||
-      //         (await checkDuplication(major.choice.grade4, v)) ||
-      //         (await checkDuplication(major.choice.gradeAll, v)))) {
-      //     switch (v.grade) {
-      //       case 1:
-      //         major.choice.grade1.push(v);
-      //         break;
-      //       case 2:
-      //         major.choice.grade2.push(v);
-      //         break;
-      //       case 3:
-      //         major.choice.grade3.push(v);
-      //         break;
-      //       case 4:
-      //         major.choice.grade4.push(v);
-      //         break;
-      //       default:
-      //         major.choice.gradeAll.push(v);
-      //         break;
-      //     }
-      //   }
-      // } else if (v.c_area.endsWith("기초")) {
-      //   if (!((await checkDuplication(major.foundamental.grade1, v)) ||
-      //         (await checkDuplication(major.foundamental.grade2, v)) ||
-      //         (await checkDuplication(major.foundamental.grade3, v)) ||
-      //         (await checkDuplication(major.foundamental.grade4, v)) ||
-      //         (await checkDuplication(major.foundamental.gradeAll, v)))) {
-      //     switch (v.grade) {
-      //       case 1:
-      //         major.foundamental.grade1.push(v);
-      //         break;
-      //       case 2:
-      //         major.foundamental.grade2.push(v);
-      //         break;
-      //       case 3:
-      //         major.foundamental.grade3.push(v);
-      //         break;
-      //       case 4:
-      //         major.foundamental.grade4.push(v);
-      //         break;
-      //       default:
-      //         major.foundamental.gradeAll.push(v);
-      //         break;
-      //     }
-      //   }
-      // }
       if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
         if (!(await checkDuplication(major.need, v))) {
           major.need.push(v);
@@ -248,67 +171,16 @@ exports.readMajor = async (req, res, next) => {
 exports.readMinor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    // let minor = { need: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []}, 
-    //               foundamental: {grade1: [], grade2: [], grade3: [], grade4: [], gradeAll: []} };
     let minor = {need: [], foundamental: []};
     const data = await readDB("timeTable", selectedSemester, {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
     for (const v of data) {
-      // if (v.c_major.endsWith("교양") || v.c_area.endsWith("교양")) {
-      //   if (!((await checkDuplication(minor.need.grade1, v)) ||
-      //         (await checkDuplication(minor.need.grade2, v)) ||
-      //         (await checkDuplication(minor.need.grade3, v)) ||
-      //         (await checkDuplication(minor.need.grade4, v)) ||
-      //         (await checkDuplication(minor.need.gradeAll, v)))) {
-      //     switch (v.grade) {
-      //       case 1:
-      //         minor.need.grade1.push(v);
-      //         break;
-      //       case 2:
-      //         minor.need.grade2.push(v);
-      //         break;
-      //       case 3:
-      //         minor.need.grade3.push(v);
-      //         break;
-      //       case 4:
-      //         minor.need.grade4.push(v);
-      //         break;
-      //       default:
-      //         minor.need.gradeAll.push(v);
-      //         break;
-      //     }
-      //   }
-      // } else {
-      //   if (!((await checkDuplication(minor.foundamental.grade1, v)) ||
-      //         (await checkDuplication(minor.foundamental.grade2, v)) ||
-      //         (await checkDuplication(minor.foundamental.grade3, v)) ||
-      //         (await checkDuplication(minor.foundamental.grade4, v)) ||
-      //         (await checkDuplication(minor.foundamental.gradeAll, v)))) {
-      //     switch (v.grade) {
-      //       case 1:
-      //         minor.foundamental.grade1.push(v);
-      //         break;
-      //       case 2:
-      //         minor.foundamental.grade2.push(v);
-      //         break;
-      //       case 3:
-      //         minor.foundamental.grade3.push(v);
-      //         break;
-      //       case 4:
-      //         minor.foundamental.grade4.push(v);
-      //         break;
-      //       default:
-      //         minor.foundamental.gradeAll.push(v);
-      //         break;
-      //     }
-      //   }
-      // }
       if (v.c_area.endsWith("기초교양") || v.c_area.endsWith("학문의기초")) {
         if (!(await checkDuplication(minor.foundamental, v))) {
           minor.foundamental.push(v);
         }
-      } else if (v.c_major.endsWith("필수교양") || v.c_major.endsWith("핵심교양")) {
+      } else if (v.c_major.endsWith("교양필수") || v.c_major.endsWith("핵심교양")) {
         if (!(await checkDuplication(minor.need, v))) {
           minor.need.push(v);
         }
