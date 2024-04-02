@@ -221,7 +221,7 @@ exports.updateUserMinor = async (req, res, next) => {
   // let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
   // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
-  const { result } = await divideList(req.body.list);
+  const result = await divideList(req.body.list);
   const reqbodysScore = req.body.sScore;
   const reqbodyneed = result.need;
   const reqbodyfoundamental = result.foundamental;
@@ -229,7 +229,7 @@ exports.updateUserMinor = async (req, res, next) => {
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
   let s_score = req.user.sScore; // 교양 점수
-  let n_score = 0; // 교양피수 점수
+  let n_score = 0; // 교양필수 점수
   let conditionName = { userid: req.user.userid }; // condition
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
