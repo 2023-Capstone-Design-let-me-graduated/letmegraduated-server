@@ -277,7 +277,7 @@ exports.updateUserMinor = async (req, res, next) => {
       n_score: n_score,
     });
 
-    const check = await checkScore("s_core", s_score);
+    let check = await checkScore("s_core", s_score);
     check = s_score<=55 ? check : false;
     // 졸업 요건
     if (check && sFoundamentalList.length === 6 && sNeedList.length === 3) {
