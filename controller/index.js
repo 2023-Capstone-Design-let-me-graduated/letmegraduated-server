@@ -259,10 +259,6 @@ exports.updateUserMinor = async (req, res, next) => {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
 
-    await updateDB("userData", "users", conditionName, {
-      s_score: s_score,
-    });
-
     // 교양 필수 관련
     // 데이터 받아서 > c_area에 중복 안되게 넣고 n_score에 학점 추가
     for (let list of reqbodyneed) {
@@ -278,6 +274,12 @@ exports.updateUserMinor = async (req, res, next) => {
 
     await updateDB("userData", "users", conditionName, {
       n_score: n_score,
+    });
+    
+    s_score+=n_score; // 교양 총학점 += 교양 필수 학점
+
+    await updateDB("userData", "users", conditionName, {
+      s_score: s_score,
     });
 
     let check = await checkScore("s_core", s_score);
