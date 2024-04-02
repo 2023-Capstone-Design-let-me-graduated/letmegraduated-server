@@ -119,7 +119,7 @@ exports.updataUserExam = async (req, res, next) => {
 exports.readMajor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    let major = {need: [], choice: [], foundamental: []};
+    let major = { need: [], choice: [], foundamental: [] };
     const data = await readDB("timeTable", selectedSemester, {
       c_area: /전공/i,
     });
@@ -139,14 +139,14 @@ exports.readMajor = async (req, res, next) => {
       }
     }
     const grade = (a, b) => {
-      const grades = [1, 2, 3, 4, '전학년'];
+      const grades = [1, 2, 3, 4, "전학년"];
       const gradeAIndex = grades.indexOf(a.grade);
       const gradeBIndex = grades.indexOf(b.grade);
-    
+
       if (gradeAIndex !== -1 && gradeBIndex !== -1) {
         return gradeAIndex - gradeBIndex;
       }
-    
+
       if (gradeAIndex !== -1) {
         return -1;
       }
@@ -154,13 +154,13 @@ exports.readMajor = async (req, res, next) => {
       if (gradeBIndex !== -1) {
         return 1;
       }
-      
+
       return 0;
     };
     major.need.sort(grade);
     major.choice.sort(grade);
     major.foundamental.sort(grade);
-    
+
     return res.json(major);
   } catch (err) {
     throw new Error(err);
@@ -171,7 +171,7 @@ exports.readMajor = async (req, res, next) => {
 exports.readMinor = async (req, res, next) => {
   const selectedSemester = req.body.selectedSemester;
   try {
-    let minor = {need: [], foundamental: []};
+    let minor = { need: [], foundamental: [] };
     const data = await readDB("timeTable", selectedSemester, {
       $or: [{ c_area: /교양/ }, { c_major: /교양/ }],
     });
@@ -180,21 +180,24 @@ exports.readMinor = async (req, res, next) => {
         if (!(await checkDuplication(minor.foundamental, v))) {
           minor.foundamental.push(v);
         }
-      } else if (v.c_major.endsWith("교양필수") || v.c_major.endsWith("핵심교양")) {
+      } else if (
+        v.c_major.endsWith("교양필수") ||
+        v.c_major.endsWith("핵심교양")
+      ) {
         if (!(await checkDuplication(minor.need, v))) {
           minor.need.push(v);
         }
       }
     }
     const grade = (a, b) => {
-      const grades = [1, 2, 3, 4, '전학년'];
+      const grades = [1, 2, 3, 4, "전학년"];
       const gradeAIndex = grades.indexOf(a.grade);
       const gradeBIndex = grades.indexOf(b.grade);
-    
+
       if (gradeAIndex !== -1 && gradeBIndex !== -1) {
         return gradeAIndex - gradeBIndex;
       }
-    
+
       if (gradeAIndex !== -1) {
         return -1;
       }
@@ -202,7 +205,7 @@ exports.readMinor = async (req, res, next) => {
       if (gradeBIndex !== -1) {
         return 1;
       }
-      
+
       return 0;
     };
     minor.need.sort(grade);
@@ -228,7 +231,7 @@ exports.updateUserMinor = async (req, res, next) => {
 
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
-  let s_score = req.user.sScore; // 교양 점수
+  let s_score = 0; // 교양 점수
   let n_score = 0; // 교양필수 점수
   let conditionName = { userid: req.user.userid }; // condition
   try {
@@ -251,7 +254,7 @@ exports.updateUserMinor = async (req, res, next) => {
         s_score += list.credit;
       }
     }
-    s_score+=+reqbodysScore;
+    s_score += +reqbodysScore;
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
@@ -278,7 +281,7 @@ exports.updateUserMinor = async (req, res, next) => {
     });
 
     let check = await checkScore("s_core", s_score);
-    check = s_score<=55 ? check : false;
+    check = s_score <= 55 ? check : false;
     // 졸업 요건
     if (check && sFoundamentalList.length === 6 && sNeedList.length === 3) {
       await updateDB("userData", "users", conditionName, { s_check: true });
