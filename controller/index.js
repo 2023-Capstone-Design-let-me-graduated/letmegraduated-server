@@ -44,9 +44,9 @@ const divideList = async (list) => {
     ) {
       list.forEach((v) => {
         if (v.c_major == "기초교양" || v.c_area == "기초교양") {
-          list.foundamental.push(v);
+          result.foundamental.push(v);
         } else {
-          list.need.push(v);
+          result.need.push(v);
         }
       });
     }
