@@ -348,9 +348,6 @@ exports.updateUserMajor = async (req, res, next) => {
     await updateDB("userData", "users", conditionName, {
       m_list: needList,
     });
-    await updateDB("userData", "users", conditionName, {
-      m_score: m_score,
-    });
     reqbodychoice.forEach((value) => {
       if (!choiceList.includes(value.sub_name)) {
         choiceList.push(value.sub_name);
@@ -363,6 +360,9 @@ exports.updateUserMajor = async (req, res, next) => {
         data.m_b_list.splice(data.m_b_list.indexOf(value.sub_name), 1);
         m_score += value.credit;
       }
+    });
+    await updateDB("userData", "users", conditionName, {
+      m_score: m_score,
     });
     await updateDB("userData", "users", conditionName, {
       m_b_list: foundamentalList,
