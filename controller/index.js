@@ -251,7 +251,7 @@ exports.updateUserMinor = async (req, res, next) => {
         s_score += list.credit;
       }
     }
-    s_score+=reqbodysScore;
+    s_score+=+reqbodysScore;
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
