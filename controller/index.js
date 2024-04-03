@@ -221,8 +221,6 @@ exports.takeSemester = (req, res, next) => {
 };
 
 exports.updateUserMinor = async (req, res, next) => {
-  // let updateMinorList1 = req.body.sFoundamentalList; // [{ sub_name: "대학영어회화1", credit: 3 }, { sub_name: "대학영어회화2", credit: 2 }]; // {"기초교양" : 이렇게 받고}
-  // let updateMinorList2 = req.body.sNeedList; // [{c_area :"INU핵심글로벌", credit : 3}]; // {"교양필수" : 이렇게 받고}
   // // 데이터 받는 코드
   const result = await divideList(req.body.list);
   const reqbodysScore = req.body.sScore;
@@ -309,11 +307,11 @@ exports.updateUserMinor = async (req, res, next) => {
       report["s_fundamental_list"] = allFoundamentalList; // 부족한 기초교양리스트
       report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
       // 유저기초교양과 졸업요건의 기초교양을 비교
-      if (allFoundamentalListN === sFoundamentalList) {
+      if (allFoundamentalListN.length === sFoundamentalList.length) {
         report["sFoundamentalList"] = true; // 기초교양 다 들었는지
       }
       // 유저교양필수와 졸업요건의 교양필수를 비교
-      if (allNeedListN === sNeedList) {
+      if (allNeedListN.length === sNeedList.length) {
         report["sNeedList"] = true;
       }
       if (check) {
