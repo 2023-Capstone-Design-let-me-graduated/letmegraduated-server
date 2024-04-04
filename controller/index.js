@@ -235,6 +235,7 @@ exports.updateUserMinor = async (req, res, next) => {
   const reqbodysScore = req.body.sScore;
   const reqbodyneed = result.need;
   const reqbodyfoundamental = result.foundamental;
+console.log("확인된 sScore : ",reqbodysScore, "확인된 sScore type : ",typeof reqbodysScore);
 
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
@@ -258,7 +259,7 @@ exports.updateUserMinor = async (req, res, next) => {
         s_score += list.credit;
       }
     }
-    s_score += +reqbodysScore;
+    s_score += reqbodysScore;
     await updateDB("userData", "users", conditionName, {
       "s_list.sFoundamentalList": sFoundamentalList,
     });
