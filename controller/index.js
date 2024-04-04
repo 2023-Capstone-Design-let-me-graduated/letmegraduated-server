@@ -16,8 +16,17 @@ const capstone = async (reqbodyneed, checkCapstone) => {
   return false;
 };
 
+/**
+ * @param {array} subjectList
+ * @param {object} dataObject
+ * @returns boolean
+ *
+ * subjectList의 각 요소에서 dataObject가 있는지 확인
+ */
 const checkDuplication = async (subjectList, dataObject) => {
-  return subjectList.some((v) => v.sub_name === dataObject.sub_name);
+  return subjectList.some(
+    (v) => v.sub_name === dataObject.sub_name && v.grade !== dataObject.grade
+  );
 };
 
 /**
@@ -235,11 +244,8 @@ exports.updateUserMinor = async (req, res, next) => {
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
 
-    let allFoundamentalList = data.s_list["기초교양"]; // (수정용)졸업요건 기초교양
-    let allNeedList = data.s_list["교양필수"]; // (수정용)졸업요건 교양필수
-
-    let allFoundamentalListN = [...allFoundamentalList]; // (확인용)졸업요건 기초교양
-    let allNeedListN = [...allNeedList]; // (확인용)졸업요건 교양필수
+    let allFoundamentalList = data.s_list["기초교양"]; // 졸업요건 기초교양 초기화
+    let allNeedList = data.s_list["교양필수"]; // 졸업요건 교양필수 초기화
 
     // 교양기초 중복안되게 리스트에 넣기
     for (let list of reqbodyfoundamental) {
@@ -273,8 +279,8 @@ exports.updateUserMinor = async (req, res, next) => {
     await updateDB("userData", "users", conditionName, {
       n_score: n_score,
     });
-    
-    s_score+=n_score; // 교양 총학점 += 교양 필수 학점
+
+    s_score += n_score; // 교양 총학점 += 교양 필수 학점
 
     await updateDB("userData", "users", conditionName, {
       s_score: s_score,
@@ -283,7 +289,7 @@ exports.updateUserMinor = async (req, res, next) => {
     let check = await checkScore("s_core", s_score);
     check = s_score <= 55 ? check : false;
     // 졸업 요건
-    if (check && sFoundamentalList.length === 6 && sNeedList.length === 3) {
+    if (check && sFoundamentalList.length >= 6 && sNeedList.length >= 3) {
       await updateDB("userData", "users", conditionName, { s_check: true });
 
       const report = {};
@@ -307,11 +313,11 @@ exports.updateUserMinor = async (req, res, next) => {
       report["s_fundamental_list"] = allFoundamentalList; // 부족한 기초교양리스트
       report["s_need_list"] = allNeedList; // 부족한 교양필수리스트
       // 유저기초교양과 졸업요건의 기초교양을 비교
-      if (allFoundamentalListN.length === sFoundamentalList.length) {
+      if (sFoundamentalList.length >= 6) {
         report["sFoundamentalList"] = true; // 기초교양 다 들었는지
       }
       // 유저교양필수와 졸업요건의 교양필수를 비교
-      if (allNeedListN.length === sNeedList.length) {
+      if (sNeedList.length >= 3) {
         report["sNeedList"] = true;
       }
       if (check) {
