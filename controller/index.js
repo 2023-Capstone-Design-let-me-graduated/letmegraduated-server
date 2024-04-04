@@ -25,7 +25,7 @@ const capstone = async (reqbodyneed, checkCapstone) => {
  */
 const checkDuplication = async (subjectList, dataObject) => {
   return subjectList.some(
-    (v) => v.sub_name === dataObject.sub_name && v.grade !== dataObject.grade
+    (v) => v.sub_name === dataObject.sub_name
   );
 };
 
