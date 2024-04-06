@@ -24,9 +24,7 @@ const capstone = async (reqbodyneed, checkCapstone) => {
  * subjectList의 각 요소에서 dataObject가 있는지 확인
  */
 const checkDuplication = async (subjectList, dataObject) => {
-  return subjectList.some(
-    (v) => v.sub_name === dataObject.sub_name
-  );
+  return subjectList.some((v) => v.sub_name === dataObject.sub_name);
 };
 
 /**
@@ -59,7 +57,6 @@ const divideList = async (list) => {
         }
       });
     }
-
     return result;
   } catch (err) {
     throw new Error(err);
@@ -90,6 +87,14 @@ exports.readTotalData = async (req, res, next) => {
         { userid: req.user.userid },
         { certificate: true }
       );
+      report["score"] = req.user.m_score + req.user.s_score + req.user.n_score;
+      report["m_need_score"] = req.user.m_need_score;
+      report["m_score"] = req.user.m_score;
+      report["s_score"] = req.user.s_score;
+      report["n_score"] = req.user.n_score;
+      report["engcheck"] = req.user.engcheck;
+      report["end"] = req.user.eng;
+      res.json(report);
     } else {
       report["state"] = false;
       await updateDB(
@@ -105,6 +110,7 @@ exports.readTotalData = async (req, res, next) => {
     report["s_score"] = req.user.s_score;
     report["n_score"] = req.user.n_score;
     report["engcheck"] = req.user.engcheck;
+    report["end"] = req.user.eng;
     res.json(report);
   } catch (err) {
     next(err);
@@ -235,7 +241,12 @@ exports.updateUserMinor = async (req, res, next) => {
   const reqbodysScore = req.body.sScore;
   const reqbodyneed = result.need;
   const reqbodyfoundamental = result.foundamental;
-console.log("확인된 sScore : ",reqbodysScore, "확인된 sScore type : ",typeof reqbodysScore);
+  console.log(
+    "확인된 sScore : ",
+    reqbodysScore,
+    "확인된 sScore type : ",
+    typeof reqbodysScore
+  );
 
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
