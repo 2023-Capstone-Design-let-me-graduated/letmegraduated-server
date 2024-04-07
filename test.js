@@ -2,6 +2,42 @@ require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
 
+/**
+ * list를 받아서 need,choice,fundamental로 나누는 함수
+ * @param {array} list
+ */
+const divideList = async (list) => {
+  // need, choice, fundamental로 분류할 객체 생성
+  try {
+    result = { need: [], choice: [], foundamental: [] };
+    if (list[0].c_area.includes("전공")) {
+      list.forEach((v) => {
+        if (v.c_area.endsWith("핵심") || v.c_area.endsWith("필수")) {
+          result.need.push(v);
+        } else if (v.c_area.endsWith("심화") || v.c_area.endsWith("선택")) {
+          result.choice.push(v);
+        } else if (v.c_area.endsWith("기초")) {
+          result.foundamental.push(v);
+        }
+      });
+    } else if (
+      list[0].c_area.includes("교양") ||
+      list[0].c_major.includes("교양")
+    ) {
+      list.forEach((v) => {
+        if (v.c_major == "기초교양" || v.c_area == "기초교양") {
+          result.foundamental.push(v);
+        } else {
+          result.need.push(v);
+        }
+      });
+    }
+    return result;
+  } catch (err) {
+    throw new Error(err);
+  }
+};
+
 // const checkDuplication = async (subjectList, dataObject) => {
 //   return subjectList.some((v) => v.sub_name === dataObject.sub_name);
 // };
@@ -104,15 +140,97 @@ const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
 
 // readMinor();
 
-const checkScore = async (type, score) => {
-  const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
-  const criteria = data[type];
-  console.log(criteria);
-  return criteria <= score;
-};
+// const checkScore = async (type, score) => {
+//   const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
+//   const criteria = data[type];
+//   console.log(criteria);
+//   return criteria <= score;
+// };
 
-const runCheck = async () => {
-  const ch = await checkScore("m_score", 20);
-  console.log(ch);
-}
-runCheck();
+// const runCheck = async () => {
+//   const ch = await checkScore("m_score", 20);
+//   console.log(ch);
+// }
+// runCheck();
+// const data = {"list":[
+//   {"_id":"65a6972665d1145955e6d8e3",
+//   "major":"컴퓨터공학부",
+//   "grade":1,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"대학수학(1)",
+//   "credit":3},
+//  {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"컴퓨터공학부",
+//   "grade":1,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"대학수학(2)",
+//   "credit":3},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"컴퓨터공학부",
+//   "grade":1,
+//   "c_major":"기초교양",
+//   "c_area":"학문의기초",
+//   "sub_name":"대학수학(2)",
+//   "credit":3},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":1,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"Academic English",
+//   "credit":2},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":1,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"글쓰기이론과실제",
+//   "credit":2},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":2,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"대학영어회화1",
+//   "credit":1},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":2,
+//   "c_major":"교양필수",
+//   "c_area":"기초교양",
+//   "sub_name":"대학영어회화2",
+//   "credit":1},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":"전학년",
+//   "c_major":"교양필수",
+//   "c_area":"INU핵심글로벌",
+//   "sub_name":"아랍어1",
+//   "credit":3},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":"전학년",
+//   "c_major":"교양필수",
+//   "c_area":"INU핵심의사소통",
+//   "sub_name":"발표와토론",
+//   "credit":3},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":"전학년",
+//   "c_major":"교양필수",
+//   "c_area":"INU핵심문제해결",
+//   "sub_name":"논리로보는세상",
+//   "credit":3},
+//   {"_id":"65a6972665d1145955e6d8ec",
+//   "major":"교양",
+//   "grade":"전학년",
+//   "c_major":"핵심교양",
+//   "c_area":"(핵심)인문",
+//   "sub_name":"미학의 이해",
+//   "credit":3}], 
+//   "sScore": 22};
+
+
+// updateUserMinor(data);

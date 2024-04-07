@@ -93,7 +93,7 @@ exports.readTotalData = async (req, res, next) => {
       report["s_score"] = req.user.s_score;
       report["n_score"] = req.user.n_score;
       report["engcheck"] = req.user.engcheck;
-      report["end"] = req.user.eng;
+      report["eng_comparison"] = req.user.eng;
       res.json(report);
     } else {
       report["state"] = false;
@@ -110,7 +110,7 @@ exports.readTotalData = async (req, res, next) => {
     report["s_score"] = req.user.s_score;
     report["n_score"] = req.user.n_score;
     report["engcheck"] = req.user.engcheck;
-    report["end"] = req.user.eng;
+    report["eng_comparison"] = req.user.eng;
     res.json(report);
   } catch (err) {
     next(err);
@@ -284,6 +284,8 @@ exports.updateUserMinor = async (req, res, next) => {
         n_score += list.credit;
       }
     }
+    s_score += n_score; // 교양 총학점 += 교양 필수 학점
+
     await updateDB("userData", "users", conditionName, {
       "s_list.sNeedList": sNeedList,
     });
@@ -292,14 +294,12 @@ exports.updateUserMinor = async (req, res, next) => {
       n_score: n_score,
     });
 
-    s_score += n_score; // 교양 총학점 += 교양 필수 학점
-
     await updateDB("userData", "users", conditionName, {
       s_score: s_score,
     });
 
     let check = await checkScore("s_core", s_score);
-    check = s_score <= 55 ? check : false;
+    check = s_score <= 55 ? true : false;
     // 졸업 요건
     if (check && sFoundamentalList.length >= 6 && sNeedList.length >= 3) {
       await updateDB("userData", "users", conditionName, { s_check: true });
