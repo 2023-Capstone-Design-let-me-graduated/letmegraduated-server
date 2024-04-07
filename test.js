@@ -252,4 +252,3 @@ const checkScore = async (type, score) => {
   const test = await checkScore("s_score", 33); // "s_score"를 전달합니다.
   console.log(test);
 })();
-

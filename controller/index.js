@@ -251,7 +251,7 @@ exports.updateUserMinor = async (req, res, next) => {
   let sFoundamentalList = []; // 기초 교양리스트
   let sNeedList = []; // 교양필수 리스트
   let s_score = 0; // 교양 점수
-  let n_score = 0; // 교양필수 점수
+  let minor_need_score = 0; // 교양필수 점수
   let conditionName = { userid: req.user.userid }; // condition
   try {
     const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
@@ -276,22 +276,18 @@ exports.updateUserMinor = async (req, res, next) => {
     });
 
     // 교양 필수 관련
-    // 데이터 받아서 > c_area에 중복 안되게 넣고 n_score에 학점 추가
+    // 데이터 받아서 > c_area에 중복 안되게 넣고 minor_need_score에 학점 추가
     for (let list of reqbodyneed) {
       if (!sNeedList.includes(list.c_area)) {
         sNeedList.push(list.c_area);
         allNeedList.splice(allNeedList.indexOf(list.c_area), 1);
-        n_score += list.credit;
       }
+      minor_need_score += list.credit;
     }
-    s_score += n_score; // 교양 총학점 += 교양 필수 학점
+    s_score += minor_need_score; // 교양 총학점 += 교양 필수 학점
 
     await updateDB("userData", "users", conditionName, {
       "s_list.sNeedList": sNeedList,
-    });
-
-    await updateDB("userData", "users", conditionName, {
-      n_score: n_score,
     });
 
     await updateDB("userData", "users", conditionName, {
