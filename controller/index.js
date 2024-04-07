@@ -295,7 +295,7 @@ exports.updateUserMinor = async (req, res, next) => {
     });
 
     let check = await checkScore("s_score", s_score);
-    if (s_score <= 55) {
+    if (s_score >= 55) {
       s_score = 55;
     }
     // check = s_score <= 55 ? check : false;
