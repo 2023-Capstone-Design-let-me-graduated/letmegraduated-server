@@ -328,7 +328,7 @@ exports.updateUserMinor = async (req, res, next) => {
       if (sNeedList.length >= 3) {
         report["sNeedList"] = true;
       }
-      if (check) {
+      if (check && (sFoundamentalList.length >= 6) && (sNeedList.length >= 3)) {
         report["checkState"] = true;
       }
       res.json(report);
