@@ -234,3 +234,22 @@ const divideList = async (list) => {
 
 
 // updateUserMinor(data);
+
+/**
+ * 숫자가 졸업 조건인 type과 자신의 숫자 score를 넣어서 졸업 조건에 충족했는지 확인하는 함수
+ * @param {string} type
+ * @param {number} score
+ *  @returns {boolean}
+ */
+const checkScore = async (type, score) => {
+  const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
+  const criteria = data[type];
+  console.log(criteria);
+  return criteria <= score;
+};
+
+(async () => {
+  const test = await checkScore("s_score", 33); // "s_score"를 전달합니다.
+  console.log(test);
+})();
+
