@@ -290,14 +290,15 @@ exports.updateUserMinor = async (req, res, next) => {
       "s_list.sNeedList": sNeedList,
     });
 
+    if (s_score >= 55) {
+      s_score = 55;
+    }
     await updateDB("userData", "users", conditionName, {
       s_score: s_score,
     });
 
     let check = await checkScore("s_score", s_score);
-    if (s_score >= 55) {
-      s_score = 55;
-    }
+    
     // check = s_score <= 55 ? check : false;
     // 졸업 요건
     if (check && sFoundamentalList.length >= 6 && sNeedList.length >= 3) {
