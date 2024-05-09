@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { MongoClient } = require("mongodb");
 const { createDB, readDB, updateDB, deleteDB } = require("./controller/db");
-
+/*
 /**
  * list를 받아서 need,choice,fundamental로 나누는 함수
  * @param {array} list
@@ -37,7 +37,6 @@ const divideList = async (list) => {
     throw new Error(err);
   }
 };
-
 // const checkDuplication = async (subjectList, dataObject) => {
 //   return subjectList.some((v) => v.sub_name === dataObject.sub_name);
 // };
@@ -233,22 +232,20 @@ const divideList = async (list) => {
 //   "sScore": 22};
 
 
-// updateUserMinor(data);
-
-/**
- * 숫자가 졸업 조건인 type과 자신의 숫자 score를 넣어서 졸업 조건에 충족했는지 확인하는 함수
- * @param {string} type
- * @param {number} score
- *  @returns {boolean}
- */
-const checkScore = async (type, score) => {
-  const data = await readDB("criteria", "score", { name: "졸업요건" }, false);
-  const criteria = data[type];
-  console.log(criteria);
-  return criteria <= score;
-};
-
-(async () => {
-  const test = await checkScore("s_score", 33); // "s_score"를 전달합니다.
-  console.log(test);
-})();
+let data = {"semester": ["2019_1", "2019_2", "2020_1", "2020_2", 
+                         "2021_1", "2021_2", "2022_1", "2022_2","2023_1", "2023_2"]}
+for (let i = 0; i < data.semester.length; i++) {
+  for (let j = 0; j < data.semester.length; j++) {
+    if (data.semester[i] === "2020_1") data.semester[i] = "2020년 1학기";
+    else if (data.semester[i] === "2020_2") data.semester[i] = "2020년 2학기";
+    else if (data.semester[i] === "2021_1") data.semester[i] = "2021년 1학기";
+    else if (data.semester[i] === "2021_2") data.semester[i] = "2021년 2학기";
+    else if (data.semester[i] === "2022_1") data.semester[i] = "2022년 1학기";
+    else if (data.semester[i] === "2022_2") data.semester[i] = "2022년 2학기";
+    else if (data.semester[i] === "2023_1") data.semester[i] = "2023년 1학기";
+    else if (data.semester[i] === "2023_2") data.semester[i] = "2023년 2학기";
+    else if (data.semester[i] === "2019_1") data.semester[i] = "2019년 1학기";
+    else if (data.semester[i] === "2019_2") data.semester[i] = "2019년 2학기";
+  }
+}
+console.log(data);

@@ -5,7 +5,7 @@ const { checkScore } = require("./check");
 /**
  *  capstone1, 2들었는지 확인 하는 함수
  *  @param {object} reqbodyneed
- *
+ * 
  */
 const capstone = async (reqbodyneed, checkCapstone) => {
   for (let item of reqbodyneed) {
@@ -233,7 +233,23 @@ exports.readMinor = async (req, res, next) => {
 };
 
 exports.takeSemester = (req, res, next) => {
-  res.json({ semester: req.user.semester });
+  let data =  {semester: req.user.semester }
+  for (let i = 0; i < data.semester.length; i++) {
+    for (let j = 0; j < data.semester.length; j++) {
+      if (data.semester[i] === "2020_1") data.semester[i] = "2020년 1학기";
+      else if (data.semester[i] === "2020_2") data.semester[i] = "2020년 2학기";
+      else if (data.semester[i] === "2021_1") data.semester[i] = "2021년 1학기";
+      else if (data.semester[i] === "2021_2") data.semester[i] = "2021년 2학기";
+      else if (data.semester[i] === "2022_1") data.semester[i] = "2022년 1학기";
+      else if (data.semester[i] === "2022_2") data.semester[i] = "2022년 2학기";
+      else if (data.semester[i] === "2023_1") data.semester[i] = "2023년 1학기";
+      else if (data.semester[i] === "2023_2") data.semester[i] = "2023년 2학기";
+      else if (data.semester[i] === "2019_1") data.semester[i] = "2019년 1학기";
+      else if (data.semester[i] === "2019_2") data.semester[i] = "2019년 2학기";
+    }
+  }
+  res.json(data);
+  // res.json({ semester: req.user.semester });
 };
 
 exports.updateUserMinor = async (req, res, next) => {
